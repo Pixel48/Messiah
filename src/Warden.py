@@ -78,7 +78,7 @@ class MainWindow(object):
     self.datePick = CustomDateEntry(frame, width = 12, background = 'darkblue', foreground = 'white', borderwidth = 2)
     self.datePick._set_text(self.datePick._date.strftime('%d-%m-%Y'))
     self.datePick['justify'] = 'center'
-    self.datePick.grid(row = R, column = C, sticky = 'W', padx = _padx, pady = _pady)
+    self.datePick.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
     # main / time #
     # main / time / label #
     nextRow()
@@ -105,13 +105,13 @@ class MainWindow(object):
     self.presenceTolLabel.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
     # main / presence tolerance / box #
     nextCol()
-    self.presenceTolBox = Entry(frame)
+    self.presenceTolBox = Scale(frame)
+    self.presenceTolBox['from_'] = 1
+    self.presenceTolBox['to_'] = 9
+    self.presenceTolBox.set(5)
+    self.presenceTolBox['orient'] = 'horizontal'
     self.presenceTolBox['width'] = 6
-    self.presenceTolBox['justify'] = 'center'
-    self.presenceTolBox.insert(0, str(presenceTolDef))
-    self.presenceTolBox['validate'] = 'key'
-    validatePresenceTolBox = (self.master.register(self.validateTolerance), '%i', '%P')
-    self.presenceTolBox['validatecommand'] = validatePresenceTolBox
+    self.presenceTolBox.bind('<ButtonRelease>', self.lateLimit)
     self.presenceTolBox.grid(row = R, column = C, sticky = 'W', padx = _padx, pady = _pady)
     # main / late tolerance
     # main / late tolerance / label #
@@ -121,14 +121,13 @@ class MainWindow(object):
     self.lateTolLabel.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
     # main / late tolerance / slider #
     nextCol()
-    self.lateTolBox = Entry(frame)
+    self.lateTolBox = Scale(frame)
+    self.lateTolBox['from_'] = 1
+    self.lateTolBox['to_'] = 30
+    self.lateTolBox.set(15)
+    self.lateTolBox['orient'] = 'horizontal'
     self.lateTolBox['width'] = 6
-    self.lateTolBox['justify'] = 'center'
-    self.lateTolBox.insert(0, str(lateTolDef))
-    self.lateTolBox['validate'] = 'key'
-    validateLateTolBox = (self.master.register(self.validateTolerance), '%i', '%P', int(self.presenceTolBox.get()))
-    self.lateTolBox['validatecommand'] = validateLateTolBox
-    self.lateTolBox.grid(row = R, column = C, sticky = 'W', padx = _padx, pady = _pady)
+    self.lateTolBox.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
     # main / Import CSV #
     # main / Import CSV / button #
     nextRow()
@@ -149,9 +148,14 @@ class MainWindow(object):
     self.github.grid(row = 99, column = 0, columnspan = 3, sticky = 'E')
   def importCsv(self):
     """Imports CSV file and opens result window"""
-    logging.debug("datePick makes " + str(self.datePick.get()))
-    logging.debug("timePick makes " + str(self.timePick.get()))
-    logging.debug("Tolerance: " + self.presenceTolBox.get() + " / " + self.lateTolBox.get())
+    logging.debug("=== import CSV ===")
+    logging.debug("datePick gives  " + str(self.datePick.get()))
+    logging.debug("timePick gives  " + str(self.timePick.get()))
+    logging.debug("Tolerance: " + str(self.presenceTolBox.get()) + " / " + str(self.lateTolBox.get()))
+  def lateLimit(self, arg):
+    """Limits LateTolBox start range"""
+    logging.debug("lateLimit(): " + str(arg))
+    self.lateTolBox['from_'] = self.presenceTolBox.get() + 1
   def timeValidate(self, index, arg):
     logging.debug("timeValidate(): index '" + index + "', arg '" + arg + "'")
     self.timePattern = re.compile(r'^((([0-2]{0,1})|([0-2]\d{0,1})|([0-2]\d:)|([0-2]\d:\d)|([0-2]\d:[0-5]\d))|((\d{0,1})|(\d:)|(\d:\d)|(\d:[0-5]\d)))$')
@@ -170,12 +174,12 @@ class MainWindow(object):
   def getTimeStr(self):
     """Returns time string in 'HH:MM' format"""
     now = dt.datetime.now()
-    hour = str(now.hour)
-    minute = str(now.minute)
-    if int(hour) < 10: hour = '0' + hour
-    if int(minute) < 10: hour = '0' + minute
-    logging.info("Start time: " + hour + ':' + minute)
-    return hour + ':' + minute
+    hour = now.hour
+    minute = now.minute
+    hour = '0' + str(hour) if hour < 10 else str(hour)
+    minute = '0' + str(minute) if minute < 10 else str(minute)
+    logging.info("Start time: " + str(hour) + ':' + str(minute))
+    return str(hour) + ':' + str(minute)
   def validateTolerance(self, index, arg, limit = 0, top = validateToleranceMaxDef):
     """Validates tolerances"""
     logging.debug('validateTolerance(): ' + str(index) + ', ' + str(arg) + ' (' + str(limit) + ', ' + str(top) + ')')
