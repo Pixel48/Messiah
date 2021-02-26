@@ -11,8 +11,7 @@ import logging
 
 LOG_FORMAT = '[%(levelname)s] %(message)s'
 logging.basicConfig(level = logging.DEBUG, format=LOG_FORMAT)
-# disable logging
-# logging.disable(logging.CRITICAL)
+logging.disable(logging.NOTSET)
 
 versionTag = '0.1.0'
 
@@ -29,19 +28,25 @@ def main():
   MainWindow(root)
   root.mainloop()
 
+# CSV lang
+ENTER = 'Dołączył'
+EXIT = 'Opuścił(a)'
+
 # window building
+maxRows = 50
 presenceTolDef = 3
 lateTolDef = 10
 validateToleranceMaxDef = 1 + 30
 _padx = 5
 _pady = 5
+global C
+global R
 R = 0
 C = 0
 def nextRow(column = 0, row = 1):
   global C, R
   R += row
-  C = 0
-  C += column
+  C = column
 def nextCol(column = 1):
   global C
   C += column
@@ -50,21 +55,17 @@ def newCol(column = 0):
   R = 0
   C = column
 
-# CSV converting
-def fixNull(file):
-  """Fixes broken csv flie"""
-  for line in file: yield line.replace('\0', ' ')
-
 class MainWindow(object):
   """Main window class"""
   def __init__(self, master):
     self.master = master
-    self.master.resizable(width=False, height=False) # lock window resize
+    self.master.resizable(width = False, height = False) # lock window resize
     # self.master.iconbitmap(r'./ico.ico') # icon
     self.frame = Frame(self.master)
     self.build(self.frame)
     self.frame.grid()
   def build(self, frame):
+    global C, R
     self.footerFont = font.Font(size = 7)
     # main #
     # main / date #
@@ -134,7 +135,7 @@ class MainWindow(object):
     self.csvBtn = Button(frame)
     self.csvBtn['text'] = 'Import CSV'
     self.csvBtn['width'] = 20
-    self.csvBtn['command'] = self.importCsv
+    self.csvBtn['command'] = self.importCSV
     self.csvBtn.grid(row = R, column = C, columnspan = 2, sticky = '', padx = _padx, pady = _pady)
     # footer
     # footer / version
@@ -146,15 +147,82 @@ class MainWindow(object):
     self.github['text'] = "GitHub.com/Pixel48/Warden"
     self.github['fg'] = 'grey'
     self.github.grid(row = 99, column = 0, columnspan = 3, sticky = 'E')
-  def importCsv(self):
+    R, C = 0, 0 # reset builder variables
+  def importCSV(self):
     """Imports CSV file and opens result window"""
+    logging.info("=== import CSV button data ===")
+    filename = fd.askopenfilename(
+      title = "Select Teams-genereted CSV file",
+      initialdir = INITPATH,
+      filetypes = (('CSV file', '*.csv'),)
+    )
+    logging.info("filename = " + str(filename))
+    logging.info("datePick = " + str(self.datePick.get()))
+    logging.info("timePick = " + str(self.timePick.get()))
+    logging.info("Tolerance = " + str(self.presenceTolBox.get()) + " / " + str(self.lateTolBox.get()))
     logging.debug("=== import CSV ===")
-    logging.debug("datePick gives  " + str(self.datePick.get()))
-    logging.debug("timePick gives  " + str(self.timePick.get()))
-    logging.debug("Tolerance: " + str(self.presenceTolBox.get()) + " / " + str(self.lateTolBox.get()))
+    if filename:
+      self.log = {}
+      with codecs.open(filename, 'r', 'utf-16') as inputFile:
+        inputFile.readline() # remove header
+        currStudent = ''
+        studentEnter = None
+        studentExit = None
+        for row in csv.reader(inputFile, delimiter = '\t'):
+          if currStudent != ' '.join(row[0].split()[::-1]):
+            if currStudent != '':
+              self.log.update({currStudent: (studentEnter, studentExit)})
+              logging.info("New student: " + currStudent + " form " + str(studentEnter) + " to " + str(studentExit))
+            studentExit = None
+            currStudent = ' '.join(row[0].split()[::-1])
+            logging.debug("Importing student " + currStudent)
+            timeStamp = row[-1].split(', ')
+            enterDay = timeStamp[0].split('.')
+            enterTime = timeStamp[1].split(':')
+            del timeStamp
+            studentEnter = dt.datetime(
+              # date
+              int(enterDay[2]),
+              int(enterDay[1]),
+              int(enterDay[0]),
+              # time
+              int(enterTime[0]),
+              int(enterTime[1]),
+              int(enterTime[2])
+            )
+            logging.debug("Enter at " + str(studentEnter))
+            del enterDay, enterTime
+          else:
+            if row[1] == EXIT: # update studentExit datetime
+              timeStamp = row[-1].split(', ')
+              exitDay = timeStamp[0].split('.')
+              exitTime = timeStamp[1].split(':')
+              del timeStamp
+              studentExit = dt.datetime(
+                # date
+                int(exitDay[2]),
+                int(exitDay[1]),
+                int(exitDay[0]),
+                # time
+                int(exitTime[0]),
+                int(exitTime[1]),
+                int(exitTime[2])
+              )
+              logging.debug("Exit at " + str(studentExit))
+              del exitDay, exitTime
+            else: continue
+        self.log.update({currStudent: (studentEnter, studentExit)})
+        logging.info("New student: " + currStudent + " form " + str(studentEnter) + " to " + str(studentExit))
+      del currStudent, studentEnter, studentExit
+      self.showResults()
+  def showResults(self):
+    """Open result window"""
+    logging.debug("Opening Result window...")
+    self.masterWindowResults = Toplevel(self.master)
+    self.appWindowResults = ResultWindow(self.masterWindowResults, self)
   def lateLimit(self, arg):
     """Limits LateTolBox start range"""
-    logging.debug("lateLimit(): " + str(arg))
+    logging.debug("lateLimit(): presenceTolBox = " + str(self.presenceTolBox.get()))
     self.lateTolBox['from_'] = self.presenceTolBox.get() + 1
   def timeValidate(self, index, arg):
     logging.debug("timeValidate(): index '" + index + "', arg '" + arg + "'")
@@ -189,8 +257,25 @@ class MainWindow(object):
     # if not arg: return True
     # if arg.isdigit():
     #   arg = int(arg)
-    #   return 
+    #   return
     # return False
+
+class ResultWindow(object):
+  """Popup window with results"""
+  def __init__(self, master, above):
+    self.master = master
+    self.master.resizable(width = False, height = False) # lock window resize
+    # self.master.iconbitmap(r'./ico.ico') # icon
+    self.above = above
+    self.frame = Frame(self.master)
+    self.build(self.frame)
+    self.frame.grid()
+  def build(self):
+    """Create Result window (scrollable in future)"""
+    global R, C
+    col = 0
+    for key, val in self.log.items():
+      
 
 class CustomDateEntry(DateEntry):
   def _select(self, event=None):
