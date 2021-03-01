@@ -112,19 +112,19 @@ class MainWindow(object):
     self.timePickStart.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
     # main / time end #
     # main / time end / label #
-    nextRow()
-    self.timeLabelEnd = Label(frame)
-    self.timeLabelEnd['text'] = "Lesson duration [min]:"
-    self.timeLabelEnd.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
-    # main / time end / time #
-    nextCol()
-    self.timePickEnd = Scale(frame)
-    self.timePickEnd['from_'] = 30
-    self.timePickEnd['to_'] = 90
-    self.timePickEnd.set(45)
-    self.timePickEnd['orient'] = 'horizontal'
-    self.timePickEnd['width'] = 6
-    self.timePickEnd.grid(row = R, column = C, sticky = 'W', padx = _padx, pady = _pady)
+    # nextRow()
+    # self.timeLabelEnd = Label(frame)
+    # self.timeLabelEnd['text'] = "Lesson duration [min]:"
+    # self.timeLabelEnd.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
+    # # main / time end / time #
+    # nextCol()
+    # self.timePickEnd = Scale(frame)
+    # self.timePickEnd['from_'] = 30
+    # self.timePickEnd['to_'] = 90
+    # self.timePickEnd.set(45)
+    # self.timePickEnd['orient'] = 'horizontal'
+    # self.timePickEnd['width'] = 6
+    # self.timePickEnd.grid(row = R, column = C, sticky = 'W', padx = _padx, pady = _pady)
     # main / presence tolerance #
     # main / presence tolerance / label #
     nextRow()
@@ -188,8 +188,8 @@ class MainWindow(object):
     self.eventStart = dt.datetime(int(timeStamp[0][2]), int(timeStamp[0][1]), int(timeStamp[0][0]), int(timeStamp[1][0]), int(timeStamp[1][1]))
     logging.info("datePick = " + str(self.datePick.get()))
     logging.info("timePickStart = " + str(self.timePickStart.get()))
-    self.eventDuration = dt.timedelta(0, self.timePickEnd.get() * 60)
-    logging.info("timePickEnd = " + str(self.timePickEnd.get()))
+    # self.eventDuration = dt.timedelta(0, self.timePickEnd.get() * 60)
+    # logging.info("timePickEnd = " + str(self.timePickEnd.get()))
     self.presenceTolerance = self.presenceTolBox.get()
     self.lateTolerance = self.lateTolBox.get()
     logging.info("Tolerance = " + str(self.presenceTolBox.get()) + " / " + str(self.lateTolBox.get()))
