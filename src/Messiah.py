@@ -3,25 +3,25 @@ LOG_FORMAT = '[%(levelname)s] %(message)s'
 logging.basicConfig(level = logging.DEBUG, format=LOG_FORMAT)
 logging.disable(logging.NOTSET)
 
-logging.debug("Logging imported")
+logging.debug("Imported Logging")
 from tkinter import *
-logging.debug("tkinter * imported")
+logging.debug("Imported tkinter *")
 from tkinter import ttk
-logging.debug("ttk imported")
+logging.debug("Imported ttk")
 from tkinter import filedialog as fd
-logging.debug("Filedialog imported")
+logging.debug("Imported Filedialog")
 from tkcalendar import DateEntry
-logging.debug("DateEntry imported")
+logging.debug("Imported DateEntry")
 from pathlib import Path
-logging.debug("Path imported")
+logging.debug("Imported Path")
 import tkinter.font as font
-logging.debug("tk.font imported")
+logging.debug("Imported tk.font")
 import csv, codecs
-logging.debug("csv & codecs imported")
+logging.debug("Imported csv & codecs")
 import datetime as dt
-logging.debug("DateTime imported")
+logging.debug("Imported DateTime")
 import re
-logging.debug("Re imported")
+logging.debug("Imported Re")
 logging.debug("Importing done!")
 
 versionTag = 'demo'
