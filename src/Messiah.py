@@ -22,6 +22,7 @@ import datetime as dt
 logging.debug("DateTime imported")
 import re
 logging.debug("Re imported")
+logging.debug("Importing done!")
 
 versionTag = 'demo'
 
@@ -88,7 +89,7 @@ class MainWindow(object):
     # main / date / datepick #
     nextCol()
     self.datePick = CustomDateEntry(frame, width = 12, background = 'darkblue', foreground = 'white', borderwidth = 2)
-    self.datePick._set_text(self.datePick._date.strftime('%d-%m-%Y'))
+    self.datePick._set_text(self.datePick._date.strftime('%d.%m.%Y'))
     self.datePick['justify'] = 'center'
     self.datePick.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
     # main / time start #
@@ -182,7 +183,7 @@ class MainWindow(object):
       filetypes = (('CSV file', '*.csv'),)
     )
     logging.info("filename = " + str(filename))
-    timeStamp = (self.datePick.get().split('-'), self.timePickStart.get().split(':'))
+    timeStamp = (self.datePick.get().split('.'), self.timePickStart.get().split(':'))
     logging.debug(timeStamp[0][0] + ' ' + timeStamp[0][1] + ' ' + timeStamp[0][2] + ' ' + timeStamp[1][0] + ' ' + timeStamp[1][1])
     self.eventStart = dt.datetime(int(timeStamp[0][2]), int(timeStamp[0][1]), int(timeStamp[0][0]), int(timeStamp[1][0]), int(timeStamp[1][1]))
     logging.info("datePick = " + str(self.datePick.get()))
@@ -335,7 +336,7 @@ class CustomDateEntry(DateEntry):
   def _select(self, event=None):
     date = self._calendar.selection_get()
     if date is not None:
-      self._set_text(date.strftime('%d-%m-%Y'))
+      self._set_text(date.strftime('%d.%m.%Y'))
       self.event_generate('<<DateEntrySelected>>')
     self._top_cal.withdraw()
     if 'readonly' not in self.state():
