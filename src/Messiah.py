@@ -9,7 +9,7 @@ logging.debug("tkinter * imported")
 from tkinter import ttk
 logging.debug("ttk imported")
 from tkinter import filedialog as fd
-logging.debug("Fieldialog imported")
+logging.debug("Filedialog imported")
 from tkcalendar import DateEntry
 logging.debug("DateEntry imported")
 from pathlib import Path
@@ -75,7 +75,6 @@ class MainWindow(object):
     self.build(self.frame)
     self.frame.grid()
     logging.info("Start time: " + self.getTimeStr())
-
   def build(self, frame):
     global C, R
     self.footerFont = font.Font(size = 7)
