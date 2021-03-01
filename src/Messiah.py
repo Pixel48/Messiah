@@ -1,19 +1,29 @@
-from tkinter import *
-from tkinter import ttk
-from tkinter import filedialog as fd
-from tkcalendar import DateEntry
-from pathlib import Path
-import tkinter.font as font
-import csv, codecs
-import datetime as dt
-import re
 import logging
-
 LOG_FORMAT = '[%(levelname)s] %(message)s'
 logging.basicConfig(level = logging.DEBUG, format=LOG_FORMAT)
 logging.disable(logging.NOTSET)
 
-versionTag = '0.1.0'
+logging.debug("Logging imported")
+from tkinter import *
+logging.debug("tkinter * imported")
+from tkinter import ttk
+logging.debug("ttk imported")
+from tkinter import filedialog as fd
+logging.debug("Fieldialog imported")
+from tkcalendar import DateEntry
+logging.debug("DateEntry imported")
+from pathlib import Path
+logging.debug("Path imported")
+import tkinter.font as font
+logging.debug("tk.font imported")
+import csv, codecs
+logging.debug("csv & codecs imported")
+import datetime as dt
+logging.debug("DateTime imported")
+import re
+logging.debug("Re imported")
+
+versionTag = 'demo'
 
 INITPATH = str(Path.home() / 'Downloads')
 
@@ -24,7 +34,7 @@ def main():
   style = ttk.Style(root)
   style.theme_use('clam')
   # root.iconbitmap(r'') # main window icon path
-  root.title("Warden")
+  root.title("Messiah")
   MainWindow(root)
   root.mainloop()
 
@@ -43,8 +53,8 @@ global C
 global R
 R = 0
 C = 0
-def nextRow(column = 0, row = 1):
-  global C, R
+def nextRow(row = 1, column = 0):
+  global R, C
   R += row
   C = column
 def nextCol(column = 1):
@@ -64,6 +74,8 @@ class MainWindow(object):
     self.frame = Frame(self.master)
     self.build(self.frame)
     self.frame.grid()
+    logging.info("Start time: " + self.getTimeStr())
+
   def build(self, frame):
     global C, R
     self.footerFont = font.Font(size = 7)
@@ -80,24 +92,39 @@ class MainWindow(object):
     self.datePick._set_text(self.datePick._date.strftime('%d-%m-%Y'))
     self.datePick['justify'] = 'center'
     self.datePick.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
-    # main / time #
-    # main / time / label #
+    # main / time start #
+    # main / time start / label #
     nextRow()
-    self.timeLabel = Label(frame)
-    self.timeLabel['text'] = "Lesson beginning:"
-    self.timeLabel.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
-    # main / time / time #
+    self.timeLabelStart = Label(frame)
+    self.timeLabelStart['text'] = "Lesson start:"
+    self.timeLabelStart.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
+    # main / time start / time #
     nextCol()
-    self.timePick = Entry(frame)
-    # self.timePick['text'] = self.getTimeStr() # DEBUG in future
-    # self.setTimeStr(self.timePick)
-    self.timePick.insert(0, self.getTimeStr())
-    self.timePick['width'] = 5
-    self.timePick['justify'] = 'center'
-    self.timePick['validate'] = 'key'
-    validateTimePick = (self.master.register(self.timeValidate), '%i', '%P')
-    self.timePick['validatecommand'] = validateTimePick
-    self.timePick.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+    self.timePickStart = Entry(frame)
+    # self.timePickStart['text'] = self.getTimeStr() # DEBUG in future
+    # self.setTimeStr(self.timePickStart)
+    self.timePickStart.insert(0, self.getTimeStr())
+    self.timePickStart['width'] = 5
+    self.timePickStart['justify'] = 'center'
+    self.timePickStart['validate'] = 'key'
+    validateTimePickStart = (self.master.register(self.timeValidate), '%i', '%P')
+    self.timePickStart['validatecommand'] = validateTimePickStart
+    self.timePickStart.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+    # main / time end #
+    # main / time end / label #
+    nextRow()
+    self.timeLabelEnd = Label(frame)
+    self.timeLabelEnd['text'] = "Lesson duration [min]:"
+    self.timeLabelEnd.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
+    # main / time end / time #
+    nextCol()
+    self.timePickEnd = Scale(frame)
+    self.timePickEnd['from_'] = 30
+    self.timePickEnd['to_'] = 90
+    self.timePickEnd.set(45)
+    self.timePickEnd['orient'] = 'horizontal'
+    self.timePickEnd['width'] = 6
+    self.timePickEnd.grid(row = R, column = C, sticky = 'W', padx = _padx, pady = _pady)
     # main / presence tolerance #
     # main / presence tolerance / label #
     nextRow()
@@ -123,7 +150,7 @@ class MainWindow(object):
     # main / late tolerance / slider #
     nextCol()
     self.lateTolBox = Scale(frame)
-    self.lateTolBox['from_'] = 1
+    self.lateTolBox['from_'] = 6
     self.lateTolBox['to_'] = 30
     self.lateTolBox.set(15)
     self.lateTolBox['orient'] = 'horizontal'
@@ -147,7 +174,6 @@ class MainWindow(object):
     self.github['text'] = "GitHub.com/Pixel48/Warden"
     self.github['fg'] = 'grey'
     self.github.grid(row = 99, column = 0, columnspan = 3, sticky = 'E')
-    R, C = 0, 0 # reset builder variables
   def importCSV(self):
     """Imports CSV file and opens result window"""
     logging.info("=== import CSV button data ===")
@@ -157,8 +183,15 @@ class MainWindow(object):
       filetypes = (('CSV file', '*.csv'),)
     )
     logging.info("filename = " + str(filename))
+    timeStamp = (self.datePick.get().split('-'), self.timePickStart.get().split(':'))
+    logging.debug(timeStamp[0][0] + ' ' + timeStamp[0][1] + ' ' + timeStamp[0][2] + ' ' + timeStamp[1][0] + ' ' + timeStamp[1][1])
+    self.eventStart = dt.datetime(int(timeStamp[0][2]), int(timeStamp[0][1]), int(timeStamp[0][0]), int(timeStamp[1][0]), int(timeStamp[1][1]))
     logging.info("datePick = " + str(self.datePick.get()))
-    logging.info("timePick = " + str(self.timePick.get()))
+    logging.info("timePickStart = " + str(self.timePickStart.get()))
+    self.eventDuration = dt.timedelta(0, self.timePickEnd.get() * 60)
+    logging.info("timePickEnd = " + str(self.timePickEnd.get()))
+    self.presenceTolerance = self.presenceTolBox.get()
+    self.lateTolerance = self.lateTolBox.get()
     logging.info("Tolerance = " + str(self.presenceTolBox.get()) + " / " + str(self.lateTolBox.get()))
     logging.debug("=== import CSV ===")
     if filename:
@@ -227,7 +260,7 @@ class MainWindow(object):
   def timeValidate(self, index, arg):
     logging.debug("timeValidate(): index '" + index + "', arg '" + arg + "'")
     self.timePattern = re.compile(r'^((([0-2]{0,1})|([0-2]\d{0,1})|([0-2]\d:)|([0-2]\d:\d)|([0-2]\d:[0-5]\d))|((\d{0,1})|(\d:)|(\d:\d)|(\d:[0-5]\d)))$')
-    if index == 1 and arg[-1].isdigit(): self.fixTime(self.timePick)
+    if index == 1 and arg[-1].isdigit(): self.fixTime(self.timePickStart)
     return True if self.timePattern.match(arg) else False
   def makeHour(self, s):
     """Automaticly adds ':' after hours"""
@@ -239,14 +272,13 @@ class MainWindow(object):
     s += ':'
     timeWidget.delete(0, END)
     timeWidget.insert(0, s)
-  def getTimeStr(self):
+  def getTimeStr(self, addMinutes = 0):
     """Returns time string in 'HH:MM' format"""
-    now = dt.datetime.now()
+    now = dt.datetime.now() + dt.timedelta(minutes = addMinutes)
     hour = now.hour
     minute = now.minute
     hour = '0' + str(hour) if hour < 10 else str(hour)
     minute = '0' + str(minute) if minute < 10 else str(minute)
-    logging.info("Start time: " + str(hour) + ':' + str(minute))
     return str(hour) + ':' + str(minute)
   def validateTolerance(self, index, arg, limit = 0, top = validateToleranceMaxDef):
     """Validates tolerances"""
@@ -268,14 +300,37 @@ class ResultWindow(object):
     # self.master.iconbitmap(r'./ico.ico') # icon
     self.above = above
     self.frame = Frame(self.master)
+    self.log = self.above.log
     self.build(self.frame)
     self.frame.grid()
-  def build(self):
+  def build(self, frame):
     """Create Result window (scrollable in future)"""
-    global R, C
-    col = 0
-    for key, val in self.log.items():
-      
+    R, C = 0, 0
+    row = 15
+    legalPresence = dt.timedelta(0, 60 * self.above.presenceTolBox.get())
+    legalLate = dt.timedelta(0, 60 * self.above.lateTolBox.get())
+    longDelta = dt.timedelta(0, -60 * 25)
+    for key in sorted(self.log.keys()):
+      if R >= row:
+        R = 0
+        C += 2
+      Label(frame, text = key).grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
+      newCol()
+      C += 1
+      entryDelta = self.log[key][0] - self.above.eventStart
+      if self.log[key][1]: exitDelta = self.log[key][1] - self.log[key][0]
+      else: exitDelta = None
+      if entryDelta < legalLate: # before start / late / ok
+        if entryDelta < longDelta: # before 25' -> absent
+          Label(frame, text = 'Absent', bg = '#d00').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+        elif longDelta < entryDelta < legalPresence: # before <25' & before legalPresence -> present
+          Label(frame, text = 'Present', bg = '#0d0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+        elif legalPresence < entryDelta < legalLate: # after legalPresence & before legalLate -> late
+          Label(frame, text = 'Late', bg = '#fd0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+      else:
+        Label(frame, text = 'Absent', bg = '#d00').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+      C -= 1
+      R += 1
 
 class CustomDateEntry(DateEntry):
   def _select(self, event=None):
