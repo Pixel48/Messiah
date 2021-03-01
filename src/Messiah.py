@@ -171,7 +171,7 @@ class MainWindow(object):
     self.version.grid(row = 99, column = 0,  sticky = 'W')
     # footer / signature
     self.github = Label(frame, font = self.footerFont)
-    self.github['text'] = "GitHub.com/Pixel48/Warden"
+    self.github['text'] = "GitHub.com/Pixel48/Messiah"
     self.github['fg'] = 'grey'
     self.github.grid(row = 99, column = 0, columnspan = 3, sticky = 'E')
   def importCSV(self):
