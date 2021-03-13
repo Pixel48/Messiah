@@ -203,11 +203,13 @@ class MainWindow(object):
     self.eventStart = dt.datetime(int(timeStamp[0][2]), int(timeStamp[0][1]), int(timeStamp[0][0]), int(timeStamp[1][0]), int(timeStamp[1][1]))
     logging.info("datePick = " + str(self.datePick.get()))
     logging.info("timePickStart = " + str(self.timePickStart.get()))
-    self.eventDuration = dt.timedelta(0, self.timePickEnd.get() * 60)
-    logging.info("timePickEnd = " + str(self.timePickEnd.get()))
-    self.presenceTolerance = self.presenceTolBox.get()
-    self.lateTolerance = self.lateTolBox.get()
-    logging.info("Tolerance = " + str(self.presenceTolBox.get()) + " / " + str(self.lateTolBox.get()))
+    self.eventDuration = dt.timedelta(0, self.eventDurationScale.get() * 60)
+    self.eventEnd = self.eventStart + self.eventDuration
+    logging.info("eventDurationScale = " + str(self.eventDurationScale.get()))
+    logging.info("eventEnd = " + str(self.eventEnd))
+    self.presenceTolerance = self.presenceTolScale.get()
+    self.lateTolerance = self.lateTolScale.get()
+    logging.info("Tolerance = " + str(self.presenceTolScale.get()) + " / " + str(self.lateTolScale.get()))
     logging.debug("=== import CSV ===")
     if filename:
       self.log = {}
@@ -269,9 +271,9 @@ class MainWindow(object):
     self.masterWindowResults = Toplevel(self.master)
     self.appWindowResults = ResultWindow(self.masterWindowResults, self)
   def lateLimit(self, arg):
-    """Limits LateTolBox start range"""
-    logging.debug("lateLimit(): presenceTolBox = " + str(self.presenceTolBox.get()))
-    self.lateTolBox['from_'] = self.presenceTolBox.get() + 1
+    """Limits LateTolScale start range"""
+    logging.debug("lateLimit(): presenceTolScale = " + str(self.presenceTolScale.get()))
+    self.lateTolScale['from_'] = self.presenceTolScale.get() + 1
   def timeValidate(self, index, arg):
     logging.debug("timeValidate(): index '" + index + "', arg '" + arg + "'")
     self.timePattern = re.compile(r'^((([0-2]{0,1})|([0-2]\d{0,1})|([0-2]\d:)|([0-2]\d:\d)|([0-2]\d:[0-5]\d))|((\d{0,1})|(\d:)|(\d:\d)|(\d:[0-5]\d)))$')
@@ -322,8 +324,8 @@ class ResultWindow(object):
     """Create Result window (scrollable in future)"""
     R, C = 0, 0
     row = 15
-    legalPresence = dt.timedelta(0, 60 * self.above.presenceTolBox.get())
-    legalLate = dt.timedelta(0, 60 * self.above.lateTolBox.get())
+    legalPresence = dt.timedelta(0, 60 * self.above.presenceTolScale.get())
+    legalLate = dt.timedelta(0, 60 * self.above.lateTolScale.get())
     longDelta = dt.timedelta(0, -60 * 25)
     for key in sorted(self.log.keys()):
       if R >= row:
@@ -333,17 +335,26 @@ class ResultWindow(object):
       newCol()
       C += 1
       entryDelta = self.log[key][0] - self.above.eventStart
-      if self.log[key][1]: exitDelta = self.log[key][1] - self.log[key][0]
-      else: exitDelta = None
+      escTol = self.above.ecsTolScale.get() * 60
+      if self.log[key][1]:
+        exitDelta = self.log[key][1] - self.log[key][0]
+        escapeDelta = self.above.eventEnd - self.log[key][1]
+      else:
+        exitDelta = dt.timedelta()
+        escapeDelta = dt.timedelta()
       if entryDelta < legalLate: # before start / late / ok
-        if entryDelta < longDelta: # before 25' -> absent
-          Label(frame, text = 'Absent', bg = '#d00').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+        if self.log[key][1] and self.log[key][1] < self.above.eventEnd and escapeDelta.seconds > escTol:
+          # logging.debug(str(escapeDelta.seconds) + " > " + str(self.above.ecsTolScale.get() * 60)) ############
+          # logging.debug(str(self.above.eventEnd) + " - " + str(self.log[key][1]))
+          Label(frame, text = "Escaped", bg = '#000', fg = '#fff').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+        # elif entryDelta < longDelta: # before 25' -> absent
+        #   Label(frame, text = 'Absent', bg = '#d00').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
         elif longDelta < entryDelta < legalPresence: # before <25' & before legalPresence -> present
           Label(frame, text = 'Present', bg = '#0d0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
         elif legalPresence < entryDelta < legalLate: # after legalPresence & before legalLate -> late
           Label(frame, text = 'Late', bg = '#fd0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
       else:
-        Label(frame, text = 'Absent', bg = '#d00').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+        Label(frame, text = 'To late', bg = '#eb0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
       C -= 1
       R += 1
 
