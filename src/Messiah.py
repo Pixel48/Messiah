@@ -28,7 +28,8 @@ logging.debug("Importing done!")
 
 versionTag = 'demo'
 
-INITPATH = str(Path.home() / 'Downloads')
+DOWNPATH = str(Path.home() / 'Downloads')
+DOCSPATH = str(Path.home() / 'Documents')
 
 # main
 def main():
@@ -67,7 +68,7 @@ def newCol(column = 0):
   R = 0
   C = column
 def plane(a):
-  return a**(1/2)*2
+  return a**(1/2)*2+1
 
 class MainWindow(object):
   """Main window class"""
@@ -78,6 +79,7 @@ class MainWindow(object):
     self.frame = Frame(self.master)
     self.build(self.frame)
     self.frame.grid()
+    self.log = {}
     logging.info("Start time: " + self.getTimeStr())
   def build(self, frame):
     global C, R
@@ -174,14 +176,21 @@ class MainWindow(object):
     self.ecsTolScale['orient'] = HORIZONTAL
     self.ecsTolScale['width'] = 6
     self.ecsTolScale.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
-    # main / Import CSV #
-    # main / Import CSV / button #
+    # main / buttons #
+    # main / buttons / list #
     nextRow()
+    self.listBtn = Button(frame)
+    self.listBtn['text'] = "Attenders list"
+    self.listBtn['command'] = self.importAttenders
+    self.listBtn['width'] = 20
+    self.listBtn.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+    # main / buttons / Import CSV #
+    nextCol()
     self.csvBtn = Button(frame)
     self.csvBtn['text'] = "Import CSV"
-    self.csvBtn['width'] = 20
     self.csvBtn['command'] = self.importCSV
-    self.csvBtn.grid(row = R, column = C, columnspan = 2, sticky = '', padx = _padx, pady = _pady)
+    self.csvBtn['width'] = 20
+    self.csvBtn.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
     # footer
     # footer / version
     self.version = Label(frame, font = self.footerFont)
@@ -192,15 +201,32 @@ class MainWindow(object):
     self.github['text'] = "GitHub.com/Pixel48/Messiah"
     self.github['fg'] = 'grey'
     self.github.grid(row = 99, column = 0, columnspan = 3, sticky = 'E')
+  def importAttenders(self):
+    """Import full list of attenders"""
+    logging.info("=== import attenders ===")
+    filename = fd.askopenfilename(
+      title = "Select full attenders list file",
+      initialdir = DOCSPATH,
+      filetypes = (
+        ('Text file', '*.txt'),
+      )
+    )
+    logging.debug("filename attenders = " + str(filename))
+    if filename:
+      self.log = {}
+      with open(filename) as attList:
+        for line in attList.readlines():
+          line = line.strip()
+          self.log.update({' '.join(x.capitalize() for x in line.split()): (None, None)})
   def importCSV(self):
     """Imports CSV file and opens result window"""
     logging.info("=== import CSV button data ===")
     filename = fd.askopenfilename(
-      title = "Select Teams-genereted CSV file",
-      initialdir = INITPATH,
+      title = "Select Teams-genereted attendance file",
+      initialdir = DOWNPATH,
       filetypes = (('CSV file', '*.csv'),)
     )
-    logging.info("filename = " + str(filename))
+    logging.info("filename CSV = " + str(filename))
     timeStamp = (self.datePick.get().split('.'), self.timePickStart.get().split(':'))
     logging.debug(timeStamp[0][0] + ' ' + timeStamp[0][1] + ' ' + timeStamp[0][2] + ' ' + timeStamp[1][0] + ' ' + timeStamp[1][1])
     self.eventStart = dt.datetime(int(timeStamp[0][2]), int(timeStamp[0][1]), int(timeStamp[0][0]), int(timeStamp[1][0]), int(timeStamp[1][1]))
@@ -215,7 +241,6 @@ class MainWindow(object):
     logging.info("Tolerance = " + str(self.presenceTolScale.get()) + " / " + str(self.lateTolScale.get()))
     logging.debug("=== import CSV ===")
     if filename:
-      self.log = {}
       with codecs.open(filename, 'r', 'utf-16') as inputFile:
         inputFile.readline() # remove header
         currStudent = ''
@@ -337,15 +362,15 @@ class ResultWindow(object):
       Label(frame, text = key).grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
       newCol()
       C += 1
-      entryDelta = self.log[key][0] - self.above.eventStart
+      if self.log[key][0]: entryDelta = self.log[key][0] - self.above.eventStart
       escTol = self.above.ecsTolScale.get() * 60
       if self.log[key][1]:
-        exitDelta = self.log[key][1] - self.log[key][0]
+        # exitDelta = self.log[key][1] - self.log[key][0]
         escapeDelta = self.above.eventEnd - self.log[key][1]
       else:
-        exitDelta = dt.timedelta()
+        # exitDelta = dt.timedelta()
         escapeDelta = dt.timedelta()
-      if entryDelta < legalLate: # before start / late / ok
+      if self.log[key][0] and entryDelta < legalLate: # before start / late / ok
         if self.log[key][1] and self.log[key][1] < self.above.eventEnd and escapeDelta.seconds > escTol:
           # logging.debug(str(escapeDelta.seconds) + " > " + str(self.above.ecsTolScale.get() * 60)) ############
           # logging.debug(str(self.above.eventEnd) + " - " + str(self.log[key][1]))
@@ -358,7 +383,7 @@ class ResultWindow(object):
           Label(frame, text = "Late", bg = '#fd0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
       else:
         if self.log[key][0]: Label(frame, text = "To late", bg = '#ea0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
-        else: Label(frame, text = "Too late", bg = '#d00').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+        else: Label(frame, text = "Absent", bg = '#d00').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
       C -= 1
       R += 1
 
