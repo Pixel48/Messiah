@@ -90,7 +90,7 @@ class MainWindow(object):
     nextCol()
     self.datePick = CustomDateEntry(frame, width = 12, background = 'darkblue', foreground = 'white', borderwidth = 2)
     self.datePick._set_text(self.datePick._date.strftime('%d.%m.%Y'))
-    self.datePick['justify'] = 'center'
+    self.datePick['justify'] = CENTER
     self.datePick.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
     # main / time start #
     # main / time start / label #
@@ -105,57 +105,72 @@ class MainWindow(object):
     # self.setTimeStr(self.timePickStart)
     self.timePickStart.insert(0, self.getTimeStr())
     self.timePickStart['width'] = 5
-    self.timePickStart['justify'] = 'center'
+    self.timePickStart['justify'] = CENTER
     self.timePickStart['validate'] = 'key'
     validateTimePickStart = (self.master.register(self.timeValidate), '%i', '%P')
     self.timePickStart['validatecommand'] = validateTimePickStart
     self.timePickStart.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
-    # main / time end #
-    # main / time end / label #
+    # main / event duration #
+    # main / event duration / label #
     nextRow()
-    self.timeLabelEnd = Label(frame)
-    self.timeLabelEnd['text'] = "Lesson duration [min]:"
-    self.timeLabelEnd.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
-    # # main / time end / time #
+    self.eventDurationLabel = Label(frame)
+    self.eventDurationLabel['text'] = "Lesson duration [min]:"
+    self.eventDurationLabel.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
+    # # main / event duration / time #
     nextCol()
-    self.timePickEnd = Scale(frame)
-    self.timePickEnd['from_'] = 30
-    self.timePickEnd['to_'] = 90
-    self.timePickEnd.set(45)
-    self.timePickEnd['orient'] = 'horizontal'
-    self.timePickEnd['width'] = 6
-    self.timePickEnd.grid(row = R, column = C, sticky = 'W', padx = _padx, pady = _pady)
+    self.eventDurationScale = Scale(frame)
+    self.eventDurationScale['from_'] = 30
+    self.eventDurationScale['to_'] = 90
+    self.eventDurationScale.set(45)
+    self.eventDurationScale['orient'] = HORIZONTAL
+    self.eventDurationScale['width'] = 6
+    self.eventDurationScale.grid(row = R, column = C, sticky = 'W', padx = _padx, pady = _pady)
     # main / presence tolerance #
     # main / presence tolerance / label #
     nextRow()
     self.presenceTolLabel = Label(frame)
     self.presenceTolLabel['text'] = 'Presence tolerance [min]:'
     self.presenceTolLabel.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
-    # main / presence tolerance / box #
+    # main / presence tolerance / scale #
     nextCol()
-    self.presenceTolBox = Scale(frame)
-    self.presenceTolBox['from_'] = 1
-    self.presenceTolBox['to_'] = 9
-    self.presenceTolBox.set(5)
-    self.presenceTolBox['orient'] = 'horizontal'
-    self.presenceTolBox['width'] = 6
-    self.presenceTolBox.bind('<ButtonRelease>', self.lateLimit)
-    self.presenceTolBox.grid(row = R, column = C, sticky = 'W', padx = _padx, pady = _pady)
-    # main / late tolerance
+    self.presenceTolScale = Scale(frame)
+    self.presenceTolScale['from_'] = 1
+    self.presenceTolScale['to_'] = 9
+    self.presenceTolScale.set(5)
+    self.presenceTolScale['orient'] = HORIZONTAL
+    self.presenceTolScale['width'] = 6
+    self.presenceTolScale.bind('<ButtonRelease>', self.lateLimit)
+    self.presenceTolScale.grid(row = R, column = C, sticky = 'W', padx = _padx, pady = _pady)
+    # main / late tolerance #
     # main / late tolerance / label #
     nextRow()
     self.lateTolLabel = Label(frame)
     self.lateTolLabel['text'] = 'Late tolerance [min]:'
     self.lateTolLabel.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
-    # main / late tolerance / slider #
+    # main / late tolerance / scale #
     nextCol()
-    self.lateTolBox = Scale(frame)
-    self.lateTolBox['from_'] = 6
-    self.lateTolBox['to_'] = 30
-    self.lateTolBox.set(15)
-    self.lateTolBox['orient'] = 'horizontal'
-    self.lateTolBox['width'] = 6
-    self.lateTolBox.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+    self.lateTolScale = Scale(frame)
+    self.lateTolScale['from_'] = 6
+    self.lateTolScale['to_'] = 30
+    self.lateTolScale.set(15)
+    self.lateTolScale['orient'] = HORIZONTAL
+    self.lateTolScale['width'] = 6
+    self.lateTolScale.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+    # main / escape tolerance #
+    # main / escape tolerance / label#
+    nextRow()
+    self.escTolLabel = Label(frame)
+    self.escTolLabel['text'] = 'Escape tolerance [min]:'
+    self.escTolLabel.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
+    # main / escape tolerance / scale #
+    nextCol()
+    self.ecsTolScale = Scale(frame)
+    self.ecsTolScale['from_'] = 15
+    self.ecsTolScale['to_'] = 0
+    self.ecsTolScale.set(3)
+    self.ecsTolScale['orient'] = HORIZONTAL
+    self.ecsTolScale['width'] = 6
+    self.ecsTolScale.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
     # main / Import CSV #
     # main / Import CSV / button #
     nextRow()
