@@ -22,11 +22,14 @@ import datetime as dt
 logging.debug("Imported DateTime")
 import re
 logging.debug("Imported Re")
+# import math
+# logging.debug("Imported math")
 logging.debug("Importing done!")
 
 versionTag = 'demo'
 
-INITPATH = str(Path.home() / 'Downloads')
+DOWNPATH = str(Path.home() / 'Downloads')
+DOCSPATH = str(Path.home() / 'Documents')
 
 # main
 def main():
@@ -44,7 +47,6 @@ ENTER = 'Dołączył'
 EXIT = 'Opuścił(a)'
 
 # window building
-maxRows = 50
 presenceTolDef = 3
 lateTolDef = 10
 validateToleranceMaxDef = 1 + 30
@@ -65,6 +67,8 @@ def newCol(column = 0):
   global C, R
   R = 0
   C = column
+def plane(a):
+  return a**(1/2)*2+1
 
 class MainWindow(object):
   """Main window class"""
@@ -75,6 +79,7 @@ class MainWindow(object):
     self.frame = Frame(self.master)
     self.build(self.frame)
     self.frame.grid()
+    self.log = {}
     logging.info("Start time: " + self.getTimeStr())
   def build(self, frame):
     global C, R
@@ -90,7 +95,7 @@ class MainWindow(object):
     nextCol()
     self.datePick = CustomDateEntry(frame, width = 12, background = 'darkblue', foreground = 'white', borderwidth = 2)
     self.datePick._set_text(self.datePick._date.strftime('%d.%m.%Y'))
-    self.datePick['justify'] = 'center'
+    self.datePick['justify'] = CENTER
     self.datePick.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
     # main / time start #
     # main / time start / label #
@@ -105,65 +110,87 @@ class MainWindow(object):
     # self.setTimeStr(self.timePickStart)
     self.timePickStart.insert(0, self.getTimeStr())
     self.timePickStart['width'] = 5
-    self.timePickStart['justify'] = 'center'
+    self.timePickStart['justify'] = CENTER
     self.timePickStart['validate'] = 'key'
     validateTimePickStart = (self.master.register(self.timeValidate), '%i', '%P')
     self.timePickStart['validatecommand'] = validateTimePickStart
     self.timePickStart.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
-    # main / time end #
-    # main / time end / label #
-    # nextRow()
-    # self.timeLabelEnd = Label(frame)
-    # self.timeLabelEnd['text'] = "Lesson duration [min]:"
-    # self.timeLabelEnd.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
-    # # main / time end / time #
-    # nextCol()
-    # self.timePickEnd = Scale(frame)
-    # self.timePickEnd['from_'] = 30
-    # self.timePickEnd['to_'] = 90
-    # self.timePickEnd.set(45)
-    # self.timePickEnd['orient'] = 'horizontal'
-    # self.timePickEnd['width'] = 6
-    # self.timePickEnd.grid(row = R, column = C, sticky = 'W', padx = _padx, pady = _pady)
+    # main / event duration #
+    # main / event duration / label #
+    nextRow()
+    self.eventDurationLabel = Label(frame)
+    self.eventDurationLabel['text'] = "Lesson duration [min]:"
+    self.eventDurationLabel.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
+    # # main / event duration / time #
+    nextCol()
+    self.eventDurationScale = Scale(frame)
+    self.eventDurationScale['from_'] = 30
+    self.eventDurationScale['to_'] = 90
+    self.eventDurationScale.set(45)
+    self.eventDurationScale['orient'] = HORIZONTAL
+    self.eventDurationScale['width'] = 6
+    self.eventDurationScale.grid(row = R, column = C, sticky = 'W', padx = _padx, pady = _pady)
     # main / presence tolerance #
     # main / presence tolerance / label #
     nextRow()
     self.presenceTolLabel = Label(frame)
     self.presenceTolLabel['text'] = "Presence tolerance [min]:"
     self.presenceTolLabel.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
-    # main / presence tolerance / box #
+    # main / presence tolerance / scale #
     nextCol()
-    self.presenceTolBox = Scale(frame)
-    self.presenceTolBox['from_'] = 1
-    self.presenceTolBox['to_'] = 9
-    self.presenceTolBox.set(5)
-    self.presenceTolBox['orient'] = 'horizontal'
-    self.presenceTolBox['width'] = 6
-    self.presenceTolBox.bind('<ButtonRelease>', self.lateLimit)
-    self.presenceTolBox.grid(row = R, column = C, sticky = 'W', padx = _padx, pady = _pady)
-    # main / late tolerance
+    self.presenceTolScale = Scale(frame)
+    self.presenceTolScale['from_'] = 1
+    self.presenceTolScale['to_'] = 9
+    self.presenceTolScale.set(5)
+    self.presenceTolScale['orient'] = HORIZONTAL
+    self.presenceTolScale['width'] = 6
+    self.presenceTolScale.bind('<ButtonRelease>', self.lateLimit)
+    self.presenceTolScale.grid(row = R, column = C, sticky = 'W', padx = _padx, pady = _pady)
+    # main / late tolerance #
     # main / late tolerance / label #
     nextRow()
     self.lateTolLabel = Label(frame)
     self.lateTolLabel['text'] = "Late tolerance [min]:"
     self.lateTolLabel.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
-    # main / late tolerance / slider #
+    # main / late tolerance / scale #
     nextCol()
-    self.lateTolBox = Scale(frame)
-    self.lateTolBox['from_'] = 6
-    self.lateTolBox['to_'] = 30
-    self.lateTolBox.set(15)
-    self.lateTolBox['orient'] = 'horizontal'
-    self.lateTolBox['width'] = 6
-    self.lateTolBox.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
-    # main / Import CSV #
-    # main / Import CSV / button #
+    self.lateTolScale = Scale(frame)
+    self.lateTolScale['from_'] = 6
+    self.lateTolScale['to_'] = 30
+    self.lateTolScale.set(15)
+    self.lateTolScale['orient'] = HORIZONTAL
+    self.lateTolScale['width'] = 6
+    self.lateTolScale.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+    # main / escape tolerance #
+    # main / escape tolerance / label#
     nextRow()
+    self.escTolLabel = Label(frame)
+    self.escTolLabel['text'] = 'Escape tolerance [min]:'
+    self.escTolLabel.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
+    # main / escape tolerance / scale #
+    nextCol()
+    self.ecsTolScale = Scale(frame)
+    self.ecsTolScale['from_'] = 15
+    self.ecsTolScale['to_'] = 0
+    self.ecsTolScale.set(3)
+    self.ecsTolScale['orient'] = HORIZONTAL
+    self.ecsTolScale['width'] = 6
+    self.ecsTolScale.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+    # main / buttons #
+    # main / buttons / list #
+    nextRow()
+    self.listBtn = Button(frame)
+    self.listBtn['text'] = "Attenders list"
+    self.listBtn['command'] = self.importAttenders
+    self.listBtn['width'] = 20
+    self.listBtn.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+    # main / buttons / Import CSV #
+    nextCol()
     self.csvBtn = Button(frame)
     self.csvBtn['text'] = "Import CSV"
-    self.csvBtn['width'] = 20
     self.csvBtn['command'] = self.importCSV
-    self.csvBtn.grid(row = R, column = C, columnspan = 2, sticky = '', padx = _padx, pady = _pady)
+    self.csvBtn['width'] = 20
+    self.csvBtn.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
     # footer
     # footer / version
     self.version = Label(frame, font = self.footerFont)
@@ -174,28 +201,46 @@ class MainWindow(object):
     self.github['text'] = "GitHub.com/Pixel48/Messiah"
     self.github['fg'] = 'grey'
     self.github.grid(row = 99, column = 0, columnspan = 3, sticky = 'E')
+  def importAttenders(self):
+    """Import full list of attenders"""
+    logging.info("=== import attenders ===")
+    filename = fd.askopenfilename(
+      title = "Select full attenders list file",
+      initialdir = DOCSPATH,
+      filetypes = (
+        ('Text file', '*.txt'),
+      )
+    )
+    logging.debug("filename attenders = " + str(filename))
+    if filename:
+      self.log = {}
+      with open(filename) as attList:
+        for line in attList.readlines():
+          line = line.strip()
+          self.log.update({' '.join(x.capitalize() for x in line.split()): (None, None)})
   def importCSV(self):
     """Imports CSV file and opens result window"""
     logging.info("=== import CSV button data ===")
     filename = fd.askopenfilename(
-      title = "Select Teams-genereted CSV file",
-      initialdir = INITPATH,
+      title = "Select Teams-genereted attendance file",
+      initialdir = DOWNPATH,
       filetypes = (('CSV file', '*.csv'),)
     )
-    logging.info("filename = " + str(filename))
+    logging.info("filename CSV = " + str(filename))
     timeStamp = (self.datePick.get().split('.'), self.timePickStart.get().split(':'))
     logging.debug(timeStamp[0][0] + ' ' + timeStamp[0][1] + ' ' + timeStamp[0][2] + ' ' + timeStamp[1][0] + ' ' + timeStamp[1][1])
     self.eventStart = dt.datetime(int(timeStamp[0][2]), int(timeStamp[0][1]), int(timeStamp[0][0]), int(timeStamp[1][0]), int(timeStamp[1][1]))
     logging.info("datePick = " + str(self.datePick.get()))
     logging.info("timePickStart = " + str(self.timePickStart.get()))
-    # self.eventDuration = dt.timedelta(0, self.timePickEnd.get() * 60)
-    # logging.info("timePickEnd = " + str(self.timePickEnd.get()))
-    self.presenceTolerance = self.presenceTolBox.get()
-    self.lateTolerance = self.lateTolBox.get()
-    logging.info("Tolerance = " + str(self.presenceTolBox.get()) + " / " + str(self.lateTolBox.get()))
+    self.eventDuration = dt.timedelta(0, self.eventDurationScale.get() * 60)
+    self.eventEnd = self.eventStart + self.eventDuration
+    logging.info("eventDurationScale = " + str(self.eventDurationScale.get()))
+    logging.info("eventEnd = " + str(self.eventEnd))
+    self.presenceTolerance = self.presenceTolScale.get()
+    self.lateTolerance = self.lateTolScale.get()
+    logging.info("Tolerance = " + str(self.presenceTolScale.get()) + " / " + str(self.lateTolScale.get()))
     logging.debug("=== import CSV ===")
     if filename:
-      self.log = {}
       with codecs.open(filename, 'r', 'utf-16') as inputFile:
         inputFile.readline() # remove header
         currStudent = ''
@@ -254,9 +299,9 @@ class MainWindow(object):
     self.masterWindowResults = Toplevel(self.master)
     self.appWindowResults = ResultWindow(self.masterWindowResults, self)
   def lateLimit(self, arg):
-    """Limits LateTolBox start range"""
-    logging.debug("lateLimit(): presenceTolBox = " + str(self.presenceTolBox.get()))
-    self.lateTolBox['from_'] = self.presenceTolBox.get() + 1
+    """Limits LateTolScale start range"""
+    logging.debug("lateLimit(): presenceTolScale = " + str(self.presenceTolScale.get()))
+    self.lateTolScale['from_'] = self.presenceTolScale.get() + 1
   def timeValidate(self, index, arg):
     logging.debug("timeValidate(): index '" + index + "', arg '" + arg + "'")
     self.timePattern = re.compile(r'^((([0-2]{0,1})|([0-2]\d{0,1})|([0-2]\d:)|([0-2]\d:\d)|([0-2]\d:[0-5]\d))|((\d{0,1})|(\d:)|(\d:\d)|(\d:[0-5]\d)))$')
@@ -306,9 +351,9 @@ class ResultWindow(object):
   def build(self, frame):
     """Create Result window (scrollable in future)"""
     R, C = 0, 0
-    row = 15
-    legalPresence = dt.timedelta(0, 60 * self.above.presenceTolBox.get())
-    legalLate = dt.timedelta(0, 60 * self.above.lateTolBox.get())
+    row = plane(len(self.log))
+    legalPresence = dt.timedelta(0, 60 * self.above.presenceTolScale.get())
+    legalLate = dt.timedelta(0, 60 * self.above.lateTolScale.get())
     longDelta = dt.timedelta(0, -60 * 25)
     for key in sorted(self.log.keys()):
       if R >= row:
@@ -317,18 +362,28 @@ class ResultWindow(object):
       Label(frame, text = key).grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
       newCol()
       C += 1
-      entryDelta = self.log[key][0] - self.above.eventStart
-      if self.log[key][1]: exitDelta = self.log[key][1] - self.log[key][0]
-      else: exitDelta = None
-      if entryDelta < legalLate: # before start / late / ok
-        if entryDelta < longDelta: # before 25' -> absent
-          Label(frame, text = "Absent", bg = '#d00').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+      if self.log[key][0]: entryDelta = self.log[key][0] - self.above.eventStart
+      escTol = self.above.ecsTolScale.get() * 60
+      if self.log[key][1]:
+        # exitDelta = self.log[key][1] - self.log[key][0]
+        escapeDelta = self.above.eventEnd - self.log[key][1]
+      else:
+        # exitDelta = dt.timedelta()
+        escapeDelta = dt.timedelta()
+      if self.log[key][0] and entryDelta < legalLate: # before start / late / ok
+        if self.log[key][1] and self.log[key][1] < self.above.eventEnd and escapeDelta.seconds > escTol:
+          # logging.debug(str(escapeDelta.seconds) + " > " + str(self.above.ecsTolScale.get() * 60)) ############
+          # logging.debug(str(self.above.eventEnd) + " - " + str(self.log[key][1]))
+          Label(frame, text = "Escaped", bg = '#000', fg = '#fff').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+        # elif entryDelta < longDelta: # before 25' -> absent
+        #   Label(frame, text = 'Absent', bg = '#d00').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
         elif longDelta < entryDelta < legalPresence: # before <25' & before legalPresence -> present
           Label(frame, text = "Present", bg = '#0d0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
         elif legalPresence < entryDelta < legalLate: # after legalPresence & before legalLate -> late
           Label(frame, text = "Late", bg = '#fd0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
       else:
-        Label(frame, text = "Absent", bg = '#d00').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+        if self.log[key][0]: Label(frame, text = "To late", bg = '#ea0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+        else: Label(frame, text = "Absent", bg = '#d00').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
       C -= 1
       R += 1
 
