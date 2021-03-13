@@ -129,7 +129,7 @@ class MainWindow(object):
     # main / presence tolerance / label #
     nextRow()
     self.presenceTolLabel = Label(frame)
-    self.presenceTolLabel['text'] = 'Presence tolerance [min]:'
+    self.presenceTolLabel['text'] = "Presence tolerance [min]:"
     self.presenceTolLabel.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
     # main / presence tolerance / box #
     nextCol()
@@ -145,7 +145,7 @@ class MainWindow(object):
     # main / late tolerance / label #
     nextRow()
     self.lateTolLabel = Label(frame)
-    self.lateTolLabel['text'] = 'Late tolerance [min]:'
+    self.lateTolLabel['text'] = "Late tolerance [min]:"
     self.lateTolLabel.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
     # main / late tolerance / slider #
     nextCol()
@@ -160,7 +160,7 @@ class MainWindow(object):
     # main / Import CSV / button #
     nextRow()
     self.csvBtn = Button(frame)
-    self.csvBtn['text'] = 'Import CSV'
+    self.csvBtn['text'] = "Import CSV"
     self.csvBtn['width'] = 20
     self.csvBtn['command'] = self.importCSV
     self.csvBtn.grid(row = R, column = C, columnspan = 2, sticky = '', padx = _padx, pady = _pady)
@@ -263,7 +263,7 @@ class MainWindow(object):
     if index == 1 and arg[-1].isdigit(): self.fixTime(self.timePickStart)
     return True if self.timePattern.match(arg) else False
   def makeHour(self, s):
-    """Automaticly adds ':' after hours"""
+    """Automaticlly adds ':' after hours""" # broken
     pass # TODO: make me
   def fixTime(self, timeWidget, first = 2):
     """Fixes time format in time widget"""
@@ -281,8 +281,8 @@ class MainWindow(object):
     minute = '0' + str(minute) if minute < 10 else str(minute)
     return str(hour) + ':' + str(minute)
   def validateTolerance(self, index, arg, limit = 0, top = validateToleranceMaxDef):
-    """Validates tolerances"""
-    logging.debug('validateTolerance(): ' + str(index) + ', ' + str(arg) + ' (' + str(limit) + ', ' + str(top) + ')')
+    """Validates tolerances""" # maybe removed
+    logging.debug("validateTolerance(): " + str(index) + ", " + str(arg) + " (" + str(limit) + ", " + str(top) + ")")
     # limit = int(limit)
     regex = re.compile(r'')
     return regex.match(arg)
@@ -322,13 +322,13 @@ class ResultWindow(object):
       else: exitDelta = None
       if entryDelta < legalLate: # before start / late / ok
         if entryDelta < longDelta: # before 25' -> absent
-          Label(frame, text = 'Absent', bg = '#d00').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+          Label(frame, text = "Absent", bg = '#d00').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
         elif longDelta < entryDelta < legalPresence: # before <25' & before legalPresence -> present
-          Label(frame, text = 'Present', bg = '#0d0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+          Label(frame, text = "Present", bg = '#0d0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
         elif legalPresence < entryDelta < legalLate: # after legalPresence & before legalLate -> late
-          Label(frame, text = 'Late', bg = '#fd0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+          Label(frame, text = "Late", bg = '#fd0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
       else:
-        Label(frame, text = 'Absent', bg = '#d00').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+        Label(frame, text = "Absent", bg = '#d00').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
       C -= 1
       R += 1
 
