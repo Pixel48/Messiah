@@ -22,6 +22,8 @@ import datetime as dt
 logging.debug("Imported DateTime")
 import re
 logging.debug("Imported Re")
+# import math
+# logging.debug("Imported math")
 logging.debug("Importing done!")
 
 versionTag = 'demo'
@@ -44,7 +46,6 @@ ENTER = 'Dołączył'
 EXIT = 'Opuścił(a)'
 
 # window building
-maxRows = 50
 presenceTolDef = 3
 lateTolDef = 10
 validateToleranceMaxDef = 1 + 30
@@ -65,6 +66,8 @@ def newCol(column = 0):
   global C, R
   R = 0
   C = column
+def plane(a):
+  return a**(1/2)*2
 
 class MainWindow(object):
   """Main window class"""
@@ -323,7 +326,7 @@ class ResultWindow(object):
   def build(self, frame):
     """Create Result window (scrollable in future)"""
     R, C = 0, 0
-    row = 15
+    row = plane(len(self.log))
     legalPresence = dt.timedelta(0, 60 * self.above.presenceTolScale.get())
     legalLate = dt.timedelta(0, 60 * self.above.lateTolScale.get())
     longDelta = dt.timedelta(0, -60 * 25)
@@ -354,7 +357,8 @@ class ResultWindow(object):
         elif legalPresence < entryDelta < legalLate: # after legalPresence & before legalLate -> late
           Label(frame, text = "Late", bg = '#fd0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
       else:
-        Label(frame, text = "To late", bg = '#eb0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+        if self.log[key][0]: Label(frame, text = "To late", bg = '#ea0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+        else: Label(frame, text = "Too late", bg = '#d00').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
       C -= 1
       R += 1
 
