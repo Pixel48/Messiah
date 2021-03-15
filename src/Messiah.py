@@ -81,7 +81,8 @@ def newCol(column=0):
   R = 0
   C = column
 def plane(a):
-  return a**(1/2)*2+1
+  out = a**(1/2)*2+1
+  return out if a > out else a//2+1
 
 class MainWindow(object):
   """Main window class"""
