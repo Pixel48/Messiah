@@ -129,7 +129,7 @@ class MainWindow(object):
     self.eventDurationScale.set(45)
     self.eventDurationScale['orient'] = HORIZONTAL
     self.eventDurationScale['width'] = 6
-    self.eventDurationScale.grid(row = R, column = C, sticky = 'W', padx = _padx, pady = _pady)
+    self.eventDurationScale.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
     # main / presence tolerance #
     # main / presence tolerance / label #
     nextRow()
@@ -145,7 +145,7 @@ class MainWindow(object):
     self.presenceTolScale['orient'] = HORIZONTAL
     self.presenceTolScale['width'] = 6
     self.presenceTolScale.bind('<ButtonRelease>', self.lateLimit)
-    self.presenceTolScale.grid(row = R, column = C, sticky = 'W', padx = _padx, pady = _pady)
+    self.presenceTolScale.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
     # main / late tolerance #
     # main / late tolerance / label #
     nextRow()
@@ -156,7 +156,7 @@ class MainWindow(object):
     nextCol()
     self.lateTolScale = Scale(frame)
     self.lateTolScale['from_'] = 6
-    self.lateTolScale['to_'] = 30
+    self.lateTolScale['to_'] = 15
     self.lateTolScale.set(15)
     self.lateTolScale['orient'] = HORIZONTAL
     self.lateTolScale['width'] = 6
