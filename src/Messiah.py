@@ -27,6 +27,7 @@ logging.debug("Imported Re")
 logging.debug("Importing done!")
 
 versionTag = '0.3.0'
+ICONPATH = 'ico.ico'
 
 DOWNPATH = str(Path.home() / 'Downloads')
 DOCSPATH = str(Path.home() / 'Documents')
@@ -49,7 +50,7 @@ def main():
   root = Tk()
   style = ttk.Style(root)
   style.theme_use('clam')
-  # root.iconbitmap(r'') # main window icon path
+  root.iconbitmap(ICONPATH) # main window icon path
   root.title("Messiah")
   MainWindow(root)
   root.mainloop()
@@ -87,7 +88,7 @@ class MainWindow(object):
   def __init__(self, master):
     self.master = master
     self.master.resizable(width = False, height = False) # lock window resize
-    # self.master.iconbitmap(r'./ico.ico') # icon
+    self.master.iconbitmap(ICONPATH) # icon
     self.frame = Frame(self.master)
     self.build(self.frame)
     self.frame.grid()
@@ -345,7 +346,7 @@ class ResultWindow(object):
   def __init__(self, master, above):
     self.master = master
     self.master.resizable(width = False, height = False) # lock window resize
-    # self.master.iconbitmap(r'./ico.ico') # icon
+    self.master.iconbitmap(ICONPATH) # icon
     self.above = above
     self.frame = Frame(self.master)
     self.log = self.above.log
