@@ -155,7 +155,7 @@ class MainWindow(object):
     nextCol()
     self.presenceTolScale = Scale(frame)
     self.presenceTolScale['from_'] = 1
-    self.presenceTolScale['to_'] = 9
+    self.presenceTolScale['to_'] = 10
     self.presenceTolScale.set(5)
     self.presenceTolScale['orient'] = HORIZONTAL
     self.presenceTolScale['width'] = 6
@@ -171,7 +171,7 @@ class MainWindow(object):
     nextCol()
     self.lateTolScale = Scale(frame)
     self.lateTolScale['from_'] = 6
-    self.lateTolScale['to_'] = 15
+    self.lateTolScale['to_'] = 20
     self.lateTolScale.set(15)
     self.lateTolScale['orient'] = HORIZONTAL
     self.lateTolScale['width'] = 6
