@@ -169,7 +169,7 @@ class MainWindow(object):
     nextCol()
     self.lateTolScale = Scale(frame)
     self.lateTolScale['from_'] = 6
-    self.lateTolScale['to_'] = 20
+    self.lateTolScale['to_'] = 15
     self.lateTolScale.set(15)
     self.lateTolScale['orient'] = HORIZONTAL
     self.lateTolScale['width'] = 6
