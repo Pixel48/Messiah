@@ -233,7 +233,7 @@ class MainWindow(object):
         for line in attList.readlines():
           line = line.strip()
           if line != '': self.log.update({' '.join(x.capitalize() for x in line.split()): (None, None)})
-      self.listBtn['text'] = "Attenders list (" + os.path.basename(filename).split('.')[0] + ")"
+      self.listBtn['text'] = os.path.basename(filename).split('.')[0]
     else:
       self.log = {}
       self.listBtn['text'] = "Attenders list"
