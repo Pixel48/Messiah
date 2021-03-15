@@ -31,6 +31,19 @@ versionTag = 'demo'
 DOWNPATH = str(Path.home() / 'Downloads')
 DOCSPATH = str(Path.home() / 'Documents')
 
+timePattern = re.compile(r'''
+  ^(
+    (\d?)|            # H
+    (                 # HH
+      ([0-1]\d?)|
+      (2[0-3]?)
+    )|
+    (\d{1,2}:)|       # H(H):
+    (\d{1,2}:\d)|     # H(H):M
+    (\d{1,2}:[0-5]\d) # H(H):M(M)
+  )$
+  ''', re.VERBOSE)
+
 # main
 def main():
   root = Tk()
@@ -304,9 +317,7 @@ class MainWindow(object):
     self.lateTolScale['from_'] = self.presenceTolScale.get() + 1
   def timeValidate(self, index, arg):
     logging.debug("timeValidate(): index '" + index + "', arg '" + arg + "'")
-    self.timePattern = re.compile(r'^((([0-2]{0,1})|([0-2]\d{0,1})|([0-2]\d:)|([0-2]\d:\d)|([0-2]\d:[0-5]\d))|((\d{0,1})|(\d:)|(\d:\d)|(\d:[0-5]\d)))$')
-    if index == 1 and arg[-1].isdigit(): self.fixTime(self.timePickStart)
-    return True if self.timePattern.match(arg) else False
+    return True if timePattern.match(arg) else False
   def makeHour(self, s):
     """Automaticlly adds ':' after hours""" # broken
     pass # TODO: make me
