@@ -417,23 +417,6 @@ class ResultWindow(object):
       C -= 2
       R += 1
 
-      # if self.log[key][0] and entryDelta < legalLate: # before start / late / ok
-      #   if self.log[key][1] and self.log[key][1] < self.above.eventEnd and escapeDelta.seconds > escTol:
-      #     # logging.debug(str(escapeDelta.seconds) + " > " + str(self.above.ecsTolScale.get() * 60)) ############
-      #     # logging.debug(str(self.above.eventEnd) + " - " + str(self.log[key][1]))
-      #     Label(frame, text = "Escaped", bg = '#000', fg = '#fff').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
-      #   # elif entryDelta < longDelta: # before 25' -> absent
-      #   #   Label(frame, text = 'Absent', bg = '#d00').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
-      #   elif longDelta < entryDelta < legalPresence: # before <25' & before legalPresence -> present
-      #     Label(frame, text = "Present", bg = '#0d0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
-      #   elif legalPresence < entryDelta < legalLate: # after legalPresence & before legalLate -> late
-      #     Label(frame, text = "Late", bg = '#fd0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
-      # else:
-      #   if self.log[key][0]: Label(frame, text = "To late", bg = '#ea0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
-      #   else: Label(frame, text = "Absent", bg = '#d00').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
-      # C -= 1
-      # R += 1
-
 class CustomDateEntry(DateEntry):
   def _select(self, event=None):
     date = self._calendar.selection_get()
