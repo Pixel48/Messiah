@@ -24,8 +24,6 @@ import datetime as dt
 logging.debug("Imported DateTime")
 import re
 logging.debug("Imported Re")
-# import math
-# logging.debug("Imported math")
 logging.debug("Importing done!")
 
 versionTag = 'demo'
@@ -49,7 +47,6 @@ timePattern = re.compile(r'''
 # main
 def main():
   root = Tk()
-  # root.geometry('200x125') # main widow size
   style = ttk.Style(root)
   style.theme_use('clam')
   # root.iconbitmap(r'') # main window icon path
@@ -342,17 +339,6 @@ class MainWindow(object):
     hour = '0' + str(hour) if hour < 10 else str(hour)
     minute = '0' + str(minute) if minute < 10 else str(minute)
     return str(hour) + ':' + str(minute)
-  def validateTolerance(self, index, arg, limit = 0, top = validateToleranceMaxDef):
-    """Validates tolerances""" # maybe removed
-    logging.debug("validateTolerance(): " + str(index) + ", " + str(arg) + " (" + str(limit) + ", " + str(top) + ")")
-    # limit = int(limit)
-    regex = re.compile(r'')
-    return regex.match(arg)
-    # if not arg: return True
-    # if arg.isdigit():
-    #   arg = int(arg)
-    #   return
-    # return False
 
 class ResultWindow(object):
   """Popup window with results"""
@@ -379,10 +365,8 @@ class ResultWindow(object):
       if self.log[key][0]: entryDelta = self.log[key][0] - self.above.eventStart
       escTol = self.above.ecsTolScale.get() * 60
       if self.log[key][1]:
-        # exitDelta = self.log[key][1] - self.log[key][0]
         escapeDelta = self.above.eventEnd - self.log[key][1]
       else:
-        # exitDelta = dt.timedelta()
         escapeDelta = dt.timedelta()
       escaped = 'Escaped'
       statusID = {
