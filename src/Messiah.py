@@ -376,9 +376,6 @@ class ResultWindow(object):
       if R >= row:
         R = 0
         C += 2
-      Label(frame, text = key).grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
-      newCol()
-      C += 1
       if self.log[key][0]: entryDelta = self.log[key][0] - self.above.eventStart
       escTol = self.above.ecsTolScale.get() * 60
       if self.log[key][1]:
@@ -387,22 +384,55 @@ class ResultWindow(object):
       else:
         # exitDelta = dt.timedelta()
         escapeDelta = dt.timedelta()
-      if self.log[key][0] and entryDelta < legalLate: # before start / late / ok
-        if self.log[key][1] and self.log[key][1] < self.above.eventEnd and escapeDelta.seconds > escTol:
-          # logging.debug(str(escapeDelta.seconds) + " > " + str(self.above.ecsTolScale.get() * 60)) ############
-          # logging.debug(str(self.above.eventEnd) + " - " + str(self.log[key][1]))
-          Label(frame, text = "Escaped", bg = '#000', fg = '#fff').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
-        # elif entryDelta < longDelta: # before 25' -> absent
-        #   Label(frame, text = 'Absent', bg = '#d00').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
-        elif longDelta < entryDelta < legalPresence: # before <25' & before legalPresence -> present
-          Label(frame, text = "Present", bg = '#0d0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
-        elif legalPresence < entryDelta < legalLate: # after legalPresence & before legalLate -> late
-          Label(frame, text = "Late", bg = '#fd0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+      escaped = 'Escaped'
+      statusID = {
+        0: 'Present',
+        1: 'Absent',
+        2: 'Late',
+        3: 'Too late'
+      }
+      statusBG = {
+        0: '#0d0',
+        1: '#d00',
+        2: '#fd0',
+        3: '#ea0'
+      }
+      status = None
+      haveEscaped = False
+      # checkout logs
+      if not self.log[key][0]: status = 1
       else:
-        if self.log[key][0]: Label(frame, text = "To late", bg = '#ea0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
-        else: Label(frame, text = "Absent", bg = '#d00').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
-      C -= 1
+        if longDelta < entryDelta < legalPresence: status = 0
+        elif legalPresence < entryDelta < legalLate: status = 2
+        else: status = 3
+      if self.log[key][1] and self.log[key][1] < self.above.eventEnd and escapeDelta.seconds > escTol: haveEscaped = True
+      # setup log
+      C += 1
+      if haveEscaped:
+        Label(frame, text = key, width = 20, fg = '#fff', bg = '#000').grid(row = R, column = C, padx = _padx, pady = _pady)
+      else:
+        Label(frame, text = key, width = 20).grid(row = R, column = C, padx = _padx, pady = _pady)
+      C += 1
+      Label(frame, text = statusID.get(status), bg = statusBG.get(status), padx = _padx).grid(row = R, column = C, sticky = 'WE')
+      C -= 2
       R += 1
+
+      # if self.log[key][0] and entryDelta < legalLate: # before start / late / ok
+      #   if self.log[key][1] and self.log[key][1] < self.above.eventEnd and escapeDelta.seconds > escTol:
+      #     # logging.debug(str(escapeDelta.seconds) + " > " + str(self.above.ecsTolScale.get() * 60)) ############
+      #     # logging.debug(str(self.above.eventEnd) + " - " + str(self.log[key][1]))
+      #     Label(frame, text = "Escaped", bg = '#000', fg = '#fff').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+      #   # elif entryDelta < longDelta: # before 25' -> absent
+      #   #   Label(frame, text = 'Absent', bg = '#d00').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+      #   elif longDelta < entryDelta < legalPresence: # before <25' & before legalPresence -> present
+      #     Label(frame, text = "Present", bg = '#0d0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+      #   elif legalPresence < entryDelta < legalLate: # after legalPresence & before legalLate -> late
+      #     Label(frame, text = "Late", bg = '#fd0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+      # else:
+      #   if self.log[key][0]: Label(frame, text = "To late", bg = '#ea0').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+      #   else: Label(frame, text = "Absent", bg = '#d00').grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+      # C -= 1
+      # R += 1
 
 class CustomDateEntry(DateEntry):
   def _select(self, event=None):
