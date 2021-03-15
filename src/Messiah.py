@@ -406,14 +406,14 @@ class ResultWindow(object):
         elif legalPresence < entryDelta < legalLate: status = 2
         else: status = 3
       if self.log[key][1] and self.log[key][1] < self.above.eventEnd and escapeDelta.seconds > escTol: haveEscaped = True
-      # setup log
+      # setup logs
+      C += 1
+      Label(frame, text = statusID.get(status), bg = statusBG.get(status)).grid(row = R, column = C, sticky = 'WE')
       C += 1
       if haveEscaped:
-        Label(frame, text = key, width = 20, fg = '#fff', bg = '#000').grid(row = R, column = C, padx = _padx, pady = _pady)
+        Label(frame, text = key, width = 15, anchor = 'w', fg = '#fff', bg = '#000').grid(row = R, column = C, padx = _padx, pady = _pady)
       else:
-        Label(frame, text = key, width = 20).grid(row = R, column = C, padx = _padx, pady = _pady)
-      C += 1
-      Label(frame, text = statusID.get(status), bg = statusBG.get(status), padx = _padx).grid(row = R, column = C, sticky = 'WE')
+        Label(frame, text = key, width = 15, anchor = 'w').grid(row = R, column = C, padx = _padx, pady = _pady)
       C -= 2
       R += 1
 
