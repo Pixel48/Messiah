@@ -26,7 +26,7 @@ import re
 logging.debug("Imported Re")
 logging.debug("Importing done!")
 
-versionTag = 'demo'
+versionTag = '0.3.0'
 
 DOWNPATH = str(Path.home() / 'Downloads')
 DOCSPATH = str(Path.home() / 'Documents')
