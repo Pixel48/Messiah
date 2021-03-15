@@ -232,7 +232,7 @@ class MainWindow(object):
       with codecs.open(filename, 'r',  'utf-8') as attList:
         for line in attList.readlines():
           line = line.strip()
-          self.log.update({' '.join(x.capitalize() for x in line.split()): (None, None)})
+          if line != '': self.log.update({' '.join(x.capitalize() for x in line.split()): (None, None)})
       self.listBtn['text'] = "Attenders list (" + os.path.basename(filename).split('.')[0] + ")"
     else:
       self.log = {}
