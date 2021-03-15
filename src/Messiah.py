@@ -6,6 +6,8 @@ logging.disable(logging.NOTSET)
 logging.debug("Imported Logging")
 from tkinter import *
 logging.debug("Imported tkinter *")
+import os
+logging.debug("Imported os")
 from tkinter import ttk
 logging.debug("Imported ttk")
 from tkinter import filedialog as fd
@@ -227,10 +229,14 @@ class MainWindow(object):
     logging.debug("filename attenders = " + str(filename))
     if filename:
       self.log = {}
-      with open(filename) as attList:
+      with codecs.open(filename, 'r',  'utf-8') as attList:
         for line in attList.readlines():
           line = line.strip()
           self.log.update({' '.join(x.capitalize() for x in line.split()): (None, None)})
+      self.listBtn['text'] = "Attenders list (" + os.path.basename(filename).split('.')[0] + ")"
+    else:
+      self.log = {}
+      self.listBtn['text'] = "Attenders list"
   def importCSV(self):
     """Imports CSV file and opens result window"""
     logging.info("=== import CSV button data ===")
