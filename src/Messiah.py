@@ -360,6 +360,9 @@ class ResultWindow(object):
     legalPresence = dt.timedelta(0, 60 * self.above.presenceTolScale.get())
     legalLate = dt.timedelta(0, 60 * self.above.lateTolScale.get())
     longDelta = dt.timedelta(0, -60 * 25)
+    maxLen = 0
+    for key in self.log.keys():
+      if len(key) > maxLen: maxLen = len(key)
     for key in sorted(self.log.keys()):
       if R >= row:
         R = 0
@@ -396,9 +399,9 @@ class ResultWindow(object):
       Label(frame, text=statusID.get(status), bg=statusBG.get(status)).grid(row=R, column=C, sticky='WE')
       C += 1
       if haveEscaped:
-        Label(frame, text=key, width=15, anchor='w', fg='#fff', bg='#000').grid(row=R, column=C, padx=_padx, pady=_pady)
+        Label(frame, text=key, width=maxLen, anchor='w', fg='#fff', bg='#000').grid(row=R, column=C, padx=_padx, pady=_pady)
       else:
-        Label(frame, text=key, width=15, anchor='w').grid(row=R, column=C, padx=_padx, pady=_pady)
+        Label(frame, text=key, width=maxLen, anchor='w').grid(row=R, column=C, padx=_padx, pady=_pady)
       C -= 2
       R += 1
 
