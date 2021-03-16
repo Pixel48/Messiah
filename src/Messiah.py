@@ -8,6 +8,8 @@ from tkinter import *
 logging.debug("Imported tkinter *")
 import os
 logging.debug("Imported os")
+import sys
+logging.debug("Imported sys")
 from tkinter import ttk
 logging.debug("Imported ttk")
 from tkinter import filedialog as fd
@@ -27,7 +29,7 @@ logging.debug("Imported Re")
 logging.debug("Importing done!")
 
 versionTag = '0.3.0'
-ICONPATH = 'ico.ico'
+ICONPATH = 'ico.ico' if '.exe' not in sys.argv[0] else 'Messiah.exe'
 
 DOWNPATH = str(Path.home() / 'Downloads')
 DOCSPATH = str(Path.home() / 'Documents')
