@@ -1,13 +1,15 @@
 import logging
 LOG_FORMAT = '[%(levelname)s] %(message)s'
-logging.basicConfig(level = logging.DEBUG, format=LOG_FORMAT)
-logging.disable(logging.NOTSET)
+logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
+logging.disable(logging.CRITICAL)
 
 logging.debug("Imported Logging")
 from tkinter import *
 logging.debug("Imported tkinter *")
 import os
 logging.debug("Imported os")
+import sys
+logging.debug("Imported sys")
 from tkinter import ttk
 logging.debug("Imported ttk")
 from tkinter import filedialog as fd
@@ -24,11 +26,10 @@ import datetime as dt
 logging.debug("Imported DateTime")
 import re
 logging.debug("Imported Re")
-# import math
-# logging.debug("Imported math")
 logging.debug("Importing done!")
 
-versionTag = 'demo'
+versionTag = '0.3.0'
+ICONPATH = 'ico.ico' if '.exe' not in sys.argv[0] else 'Messiah.exe'
 
 DOWNPATH = str(Path.home() / 'Downloads')
 DOCSPATH = str(Path.home() / 'Documents')
@@ -40,8 +41,7 @@ timePattern = re.compile(r'''
       ([0-1]\d?)|
       (2[0-3]?)
     )|
-    (\d{1,2}:)|       # H(H):
-    (\d{1,2}:\d)|     # H(H):M
+    (\d{1,2}:\d?)|     # H(H): / H(H):M
     (\d{1,2}:[0-5]\d) # H(H):M(M)
   )$
   ''', re.VERBOSE)
@@ -49,10 +49,9 @@ timePattern = re.compile(r'''
 # main
 def main():
   root = Tk()
-  # root.geometry('200x125') # main widow size
   style = ttk.Style(root)
   style.theme_use('clam')
-  # root.iconbitmap(r'') # main window icon path
+  root.iconbitmap(ICONPATH) # main window icon path
   root.title("Messiah")
   MainWindow(root)
   root.mainloop()
@@ -71,26 +70,27 @@ global C
 global R
 R = 0
 C = 0
-def nextRow(row = 1, column = 0):
+def nextRow(row=1, column=0):
   global R, C
   R += row
   C = column
-def nextCol(column = 1):
+def nextCol(column=1):
   global C
   C += column
-def newCol(column = 0):
+def newCol(column=0):
   global C, R
   R = 0
   C = column
 def plane(a):
-  return a**(1/2)*2+1
+  out = a**(1/2)*2+1
+  return out if a > out else a//2+1
 
 class MainWindow(object):
   """Main window class"""
   def __init__(self, master):
     self.master = master
-    self.master.resizable(width = False, height = False) # lock window resize
-    # self.master.iconbitmap(r'./ico.ico') # icon
+    self.master.resizable(width=False, height=False) # lock window resize
+    self.master.iconbitmap(ICONPATH) # icon
     self.frame = Frame(self.master)
     self.build(self.frame)
     self.frame.grid()
@@ -98,26 +98,26 @@ class MainWindow(object):
     logging.info("Start time: " + self.getTimeStr())
   def build(self, frame):
     global C, R
-    self.footerFont = font.Font(size = 7)
+    self.footerFont = font.Font(size=7)
     # main #
     # main / date #
     # main / date / label #
     newCol()
     self.dateLabel = Label(frame)
     self.dateLabel['text'] = "Lesson date:"
-    self.dateLabel.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
+    self.dateLabel.grid(row=R, column=C, sticky='E', padx=_padx, pady=_pady)
     # main / date / datepick #
     nextCol()
-    self.datePick = CustomDateEntry(frame, width = 12, background = 'darkblue', foreground = 'white', borderwidth = 2)
+    self.datePick = CustomDateEntry(frame, width=12, background='darkblue', foreground='white', borderwidth=2)
     self.datePick._set_text(self.datePick._date.strftime('%d.%m.%Y'))
     self.datePick['justify'] = CENTER
-    self.datePick.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+    self.datePick.grid(row=R, column=C, sticky='WE', padx=_padx, pady=_pady)
     # main / time start #
     # main / time start / label #
     nextRow()
     self.timeLabelStart = Label(frame)
     self.timeLabelStart['text'] = "Lesson start:"
-    self.timeLabelStart.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
+    self.timeLabelStart.grid(row=R, column=C, sticky='E', padx=_padx, pady=_pady)
     # main / time start / time #
     nextCol()
     self.timePickStart = Entry(frame)
@@ -129,13 +129,13 @@ class MainWindow(object):
     self.timePickStart['validate'] = 'key'
     validateTimePickStart = (self.master.register(self.timeValidate), '%i', '%P')
     self.timePickStart['validatecommand'] = validateTimePickStart
-    self.timePickStart.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+    self.timePickStart.grid(row=R, column=C, sticky='WE', padx=_padx, pady=_pady)
     # main / event duration #
     # main / event duration / label #
     nextRow()
     self.eventDurationLabel = Label(frame)
     self.eventDurationLabel['text'] = "Lesson duration [min]:"
-    self.eventDurationLabel.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
+    self.eventDurationLabel.grid(row=R, column=C, sticky='E', padx=_padx, pady=_pady)
     # # main / event duration / time #
     nextCol()
     self.eventDurationScale = Scale(frame)
@@ -144,13 +144,13 @@ class MainWindow(object):
     self.eventDurationScale.set(45)
     self.eventDurationScale['orient'] = HORIZONTAL
     self.eventDurationScale['width'] = 6
-    self.eventDurationScale.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+    self.eventDurationScale.grid(row=R, column=C, sticky='WE', padx=_padx, pady=_pady)
     # main / presence tolerance #
     # main / presence tolerance / label #
     nextRow()
     self.presenceTolLabel = Label(frame)
     self.presenceTolLabel['text'] = "Presence tolerance [min]:"
-    self.presenceTolLabel.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
+    self.presenceTolLabel.grid(row=R, column=C, sticky='E', padx=_padx, pady=_pady)
     # main / presence tolerance / scale #
     nextCol()
     self.presenceTolScale = Scale(frame)
@@ -160,28 +160,28 @@ class MainWindow(object):
     self.presenceTolScale['orient'] = HORIZONTAL
     self.presenceTolScale['width'] = 6
     self.presenceTolScale.bind('<ButtonRelease>', self.lateLimit)
-    self.presenceTolScale.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+    self.presenceTolScale.grid(row=R, column=C, sticky='WE', padx=_padx, pady=_pady)
     # main / late tolerance #
     # main / late tolerance / label #
     nextRow()
     self.lateTolLabel = Label(frame)
     self.lateTolLabel['text'] = "Late tolerance [min]:"
-    self.lateTolLabel.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
+    self.lateTolLabel.grid(row=R, column=C, sticky='E', padx=_padx, pady=_pady)
     # main / late tolerance / scale #
     nextCol()
     self.lateTolScale = Scale(frame)
     self.lateTolScale['from_'] = 6
-    self.lateTolScale['to_'] = 20
+    self.lateTolScale['to_'] = 15
     self.lateTolScale.set(15)
     self.lateTolScale['orient'] = HORIZONTAL
     self.lateTolScale['width'] = 6
-    self.lateTolScale.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+    self.lateTolScale.grid(row=R, column=C, sticky='WE', padx=_padx, pady=_pady)
     # main / escape tolerance #
     # main / escape tolerance / label#
     nextRow()
     self.escTolLabel = Label(frame)
     self.escTolLabel['text'] = 'Escape tolerance [min]:'
-    self.escTolLabel.grid(row = R, column = C, sticky = 'E', padx = _padx, pady = _pady)
+    self.escTolLabel.grid(row=R, column=C, sticky='E', padx=_padx, pady=_pady)
     # main / escape tolerance / scale #
     nextCol()
     self.ecsTolScale = Scale(frame)
@@ -190,7 +190,7 @@ class MainWindow(object):
     self.ecsTolScale.set(3)
     self.ecsTolScale['orient'] = HORIZONTAL
     self.ecsTolScale['width'] = 6
-    self.ecsTolScale.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+    self.ecsTolScale.grid(row=R, column=C, sticky='WE', padx=_padx, pady=_pady)
     # main / buttons #
     # main / buttons / list #
     nextRow()
@@ -198,31 +198,31 @@ class MainWindow(object):
     self.listBtn['text'] = "Attenders list"
     self.listBtn['command'] = self.importAttenders
     self.listBtn['width'] = 20
-    self.listBtn.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+    self.listBtn.grid(row=R, column=C, sticky='WE', padx=_padx, pady=_pady)
     # main / buttons / Import CSV #
     nextCol()
     self.csvBtn = Button(frame)
     self.csvBtn['text'] = "Import CSV"
     self.csvBtn['command'] = self.importCSV
     self.csvBtn['width'] = 20
-    self.csvBtn.grid(row = R, column = C, sticky = 'WE', padx = _padx, pady = _pady)
+    self.csvBtn.grid(row=R, column=C, sticky='WE', padx=_padx, pady=_pady)
     # footer
     # footer / version
-    self.version = Label(frame, font = self.footerFont)
+    self.version = Label(frame, font=self.footerFont)
     self.version['text'] = versionTag
-    self.version.grid(row = 99, column = 0,  sticky = 'W')
+    self.version.grid(row=99, column=0,  sticky='W')
     # footer / signature
-    self.github = Label(frame, font = self.footerFont)
+    self.github = Label(frame, font=self.footerFont)
     self.github['text'] = "GitHub.com/Pixel48/Messiah"
     self.github['fg'] = 'grey'
-    self.github.grid(row = 99, column = 0, columnspan = 3, sticky = 'E')
+    self.github.grid(row=99, column=0, columnspan=3, sticky='E')
   def importAttenders(self):
     """Import full list of attenders"""
     logging.info("=== import attenders ===")
     filename = fd.askopenfilename(
-      title = "Select full attenders list file",
-      initialdir = DOCSPATH,
-      filetypes = (
+      title="Select full attenders list file",
+      initialdir=DOCSPATH,
+      filetypes=(
         ('Text file', '*.txt'),
       )
     )
@@ -241,9 +241,9 @@ class MainWindow(object):
     """Imports CSV file and opens result window"""
     logging.info("=== import CSV button data ===")
     filename = fd.askopenfilename(
-      title = "Select Teams-genereted attendance file",
-      initialdir = DOWNPATH,
-      filetypes = (('CSV file', '*.csv'),)
+      title="Select Teams-genereted attendance file",
+      initialdir=DOWNPATH,
+      filetypes=(('CSV file', '*.csv'),)
     )
     logging.info("filename CSV = " + str(filename))
     timeStamp = (self.datePick.get().split('.'), self.timePickStart.get().split(':'))
@@ -265,7 +265,7 @@ class MainWindow(object):
         currStudent = ''
         studentEnter = None
         studentExit = None
-        for row in csv.reader(inputFile, delimiter = '\t'):
+        for row in csv.reader(inputFile, delimiter='\t'):
           if currStudent != ' '.join(row[0].split()[::-1]):
             if currStudent != '':
               self.log.update({currStudent: (studentEnter, studentExit)})
@@ -315,7 +315,8 @@ class MainWindow(object):
   def showResults(self):
     """Open result window"""
     logging.debug("Opening Result window...")
-    self.masterWindowResults = Toplevel(self.master)
+    self.masterWindowResults=Toplevel(self.master)
+    self.masterWindowResults.title(self.datePick.get() + ' // ' + self.timePickStart.get())
     self.appWindowResults = ResultWindow(self.masterWindowResults, self)
   def lateLimit(self, arg):
     """Limits LateTolScale start range"""
@@ -327,39 +328,28 @@ class MainWindow(object):
   def makeHour(self, s):
     """Automaticlly adds ':' after hours""" # broken
     pass # TODO: make me
-  def fixTime(self, timeWidget, first = 2):
+  def fixTime(self, timeWidget, first=2):
     """Fixes time format in time widget"""
     logging.debug("fixTime()")
     s = str(timeWidget.get())[:first]
     s += ':'
     timeWidget.delete(0, END)
     timeWidget.insert(0, s)
-  def getTimeStr(self, addMinutes = 0):
+  def getTimeStr(self, timestamp=dt.datetime.now(), addMinutes=0):
     """Returns time string in 'HH:MM' format"""
-    now = dt.datetime.now() + dt.timedelta(minutes = addMinutes)
+    now = timestamp + dt.timedelta(minutes=addMinutes)
     hour = now.hour
     minute = now.minute
     hour = '0' + str(hour) if hour < 10 else str(hour)
     minute = '0' + str(minute) if minute < 10 else str(minute)
     return str(hour) + ':' + str(minute)
-  def validateTolerance(self, index, arg, limit = 0, top = validateToleranceMaxDef):
-    """Validates tolerances""" # maybe removed
-    logging.debug("validateTolerance(): " + str(index) + ", " + str(arg) + " (" + str(limit) + ", " + str(top) + ")")
-    # limit = int(limit)
-    regex = re.compile(r'')
-    return regex.match(arg)
-    # if not arg: return True
-    # if arg.isdigit():
-    #   arg = int(arg)
-    #   return
-    # return False
 
 class ResultWindow(object):
   """Popup window with results"""
   def __init__(self, master, above):
     self.master = master
-    self.master.resizable(width = False, height = False) # lock window resize
-    # self.master.iconbitmap(r'./ico.ico') # icon
+    self.master.resizable(width=False, height=False) # lock window resize
+    self.master.iconbitmap(ICONPATH) # icon
     self.above = above
     self.frame = Frame(self.master)
     self.log = self.above.log
@@ -372,6 +362,9 @@ class ResultWindow(object):
     legalPresence = dt.timedelta(0, 60 * self.above.presenceTolScale.get())
     legalLate = dt.timedelta(0, 60 * self.above.lateTolScale.get())
     longDelta = dt.timedelta(0, -60 * 25)
+    maxLen = 0
+    for key in self.log.keys():
+      if len(key) > maxLen: maxLen = len(key)
     for key in sorted(self.log.keys()):
       if R >= row:
         R = 0
@@ -379,12 +372,9 @@ class ResultWindow(object):
       if self.log[key][0]: entryDelta = self.log[key][0] - self.above.eventStart
       escTol = self.above.ecsTolScale.get() * 60
       if self.log[key][1]:
-        # exitDelta = self.log[key][1] - self.log[key][0]
         escapeDelta = self.above.eventEnd - self.log[key][1]
       else:
-        # exitDelta = dt.timedelta()
         escapeDelta = dt.timedelta()
-      escaped = 'Escaped'
       statusID = {
         0: 'Present',
         1: 'Absent',
@@ -408,12 +398,12 @@ class ResultWindow(object):
       if self.log[key][1] and self.log[key][1] < self.above.eventEnd and escapeDelta.seconds > escTol: haveEscaped = True
       # setup logs
       C += 1
-      Label(frame, text = statusID.get(status), bg = statusBG.get(status)).grid(row = R, column = C, sticky = 'WE')
+      Label(frame, text=statusID.get(status), bg=statusBG.get(status)).grid(row=R, column=C, sticky='WE')
       C += 1
       if haveEscaped:
-        Label(frame, text = key, width = 15, anchor = 'w', fg = '#fff', bg = '#000').grid(row = R, column = C, padx = _padx, pady = _pady)
+        Label(frame, text=key, width=maxLen, anchor='w', fg='#fff', bg='#000').grid(row=R, column=C, padx=_padx, pady=_pady)
       else:
-        Label(frame, text = key, width = 15, anchor = 'w').grid(row = R, column = C, padx = _padx, pady = _pady)
+        Label(frame, text=key, width=maxLen, anchor='w').grid(row=R, column=C, padx=_padx, pady=_pady)
       C -= 2
       R += 1
 
