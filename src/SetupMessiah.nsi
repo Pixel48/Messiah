@@ -2,13 +2,13 @@
 ; Includes
   ; Modern UI 2
   !include "MUI2.nsh"
+    ; Icons
+    !define MUI_ICON "ico.ico"
+    !define MUI_UNICON "unico.ico"
     ; Directory page
     !define MUI_DIRECTORYPAGE_TEXT_TOP "Thanks for choosing Messiah!"
     ; Uninstall Directory page
     !define MUI_UNCONFIRMPAGE_TEXT_TOP "Uninstall Messiah?"
-    ; Icons
-    !define MUI_ICON "ico.ico"
-    !define MUI_UNICON "unico.ico"
 
 ; Defines
 !define PROG_NAME "Messiah"
@@ -19,20 +19,20 @@
 !define DESKTOP_SHORTCUT "$DESKTOP\${PROG_NAME}.lnk"
 
 ; Settings
-Name "Messiah"
-OutFile "pyinst\Setup Messiah.exe"
+Name "${PROG_NAME}"
+OutFile "pyinst\Setup_${PROG_NAME}.exe"
 RequestExecutionLevel admin
 InstallDir "$PROGRAMFILES64\${PROG_NAME}"
-!define UNINSTDIR "$INSTDIR\Uninstall Messiah.exe"
+!define UNINSTDIR "$INSTDIR\Uninstall ${PROG_NAME}.exe"
 
 ; Pages
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 
 ; Installer
-Section "Messiah" install
+Section "${PROG_NAME}" install
   SetOutPath $INSTDIR
-  File /r "pyinst\dist\Messiah\*"
+  File /r "pyinst\dist\${PROG_NAME}\*"
   ; Registry setup
     ; Instalation info
     WriteRegStr HKLM "${INST_KEY}" "InstallDir" "$INSTDIR"
@@ -62,7 +62,7 @@ SectionEnd
 
 Section "Uninstall" uninstall
   Delete "${DESKTOP_SHORTCUT}"
-  Delete "${UNINSTALDIR}"
+  Delete "${UNINSTDIR}"
   RMDir /r "$INSTDIR"
   DeleteRegKey HKLM "${INST_KEY}"
   DeleteRegKey HKLM "${UNINST_KEY}"
