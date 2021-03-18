@@ -28,7 +28,7 @@ import re
 logging.debug("Imported Re")
 logging.debug("Importing done!")
 
-versionTag = '0.3.0'
+versionTag = '0.3.1'
 ICONPATH = 'ico.ico' if '.exe' not in sys.argv[0] else 'Messiah.exe'
 
 DOWNPATH = str(Path.home() / 'Downloads')
@@ -95,6 +95,7 @@ class MainWindow(object):
     self.build(self.frame)
     self.frame.grid()
     self.log = {}
+    self.list = []
     logging.info("Start time: " + self.getTimeStr())
   def build(self, frame):
     global C, R
@@ -227,15 +228,14 @@ class MainWindow(object):
       )
     )
     logging.debug("filename attenders = " + str(filename))
+    self.list = []
     if filename:
-      self.log = {}
       with codecs.open(filename, 'r',  'utf-8') as attList:
         for line in attList.readlines():
           line = line.strip()
-          if line != '': self.log.update({' '.join(x.capitalize() for x in line.split()): (None, None)})
+          if line != '': self.list.append(line)
       self.listBtn['text'] = os.path.basename(filename).split('.')[0]
     else:
-      self.log = {}
       self.listBtn['text'] = "Attenders list"
   def importCSV(self):
     """Imports CSV file and opens result window"""
@@ -260,6 +260,10 @@ class MainWindow(object):
     logging.info("Tolerance = " + str(self.presenceTolScale.get()) + " / " + str(self.lateTolScale.get()))
     logging.debug("=== import CSV ===")
     if filename:
+      self.log = {}
+      if self.list:
+        for attender in self.list:
+          if attender: self.log.update({' '.join(x.capitalize() for x in attender.split()): (None, None)})
       with codecs.open(filename, 'r', 'utf-16') as inputFile:
         inputFile.readline() # remove header
         currStudent = ''
