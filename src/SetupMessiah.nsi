@@ -3,8 +3,8 @@
   ; Modern UI 2
   !include "MUI2.nsh"
     ; Icons
-    !define MUI_ICON "ico.ico"
-    !define MUI_UNICON "unico.ico"
+    !define MUI_ICON "./icons/ico.ico"
+    !define MUI_UNICON "./icons/unico.ico"
     ; Directory page
     !define MUI_DIRECTORYPAGE_TEXT_TOP "Thanks for choosing Messiah!"
     ; Uninstall Directory page
