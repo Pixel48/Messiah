@@ -12,7 +12,7 @@
 
 ; Defines
 !define PROG_NAME "Messiah"
-!define VERSION "0.3.0"
+!define VERSION "0.3.1"
 !define PUBLISHER "GitHub.com/Pixel48"
 !define INST_KEY "SOFTWARE\${PROG_NAME}"
 !define UNINST_KEY "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME}"
