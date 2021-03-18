@@ -3,8 +3,8 @@
   ; Modern UI 2
   !include "MUI2.nsh"
     ; Icons
-    !define MUI_ICON "ico.ico"
-    !define MUI_UNICON "unico.ico"
+    !define MUI_ICON "./icons/ico.ico"
+    !define MUI_UNICON "./icons/unico.ico"
     ; Directory page
     !define MUI_DIRECTORYPAGE_TEXT_TOP "Thanks for choosing Messiah!"
     ; Uninstall Directory page
@@ -12,7 +12,7 @@
 
 ; Defines
 !define PROG_NAME "Messiah"
-!define VERSION "0.3.0"
+!define VERSION "0.3.1"
 !define PUBLISHER "GitHub.com/Pixel48"
 !define INST_KEY "SOFTWARE\${PROG_NAME}"
 !define UNINST_KEY "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME}"
