@@ -29,7 +29,7 @@ logging.debug("Imported Re")
 logging.debug("Importing done!")
 
 versionTag = '0.3.1'
-ICONPATH = 'ico.ico' if '.exe' not in sys.argv[0] else 'Messiah.exe'
+ICONPATH = 'icons/ico.ico' if '.exe' not in sys.argv[0] else 'Messiah.exe'
 
 DOWNPATH = str(Path.home() / 'Downloads')
 DOCSPATH = str(Path.home() / 'Documents')
