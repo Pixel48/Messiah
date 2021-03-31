@@ -1,31 +1,21 @@
 import logging
 LOG_FORMAT = '[%(levelname)s] %(message)s'
 logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
-logging.disable(logging.CRITICAL)
-
+logging.disable(logging.NOTSET)
 logging.debug("Imported Logging")
-from tkinter import *
-logging.debug("Imported tkinter *")
-import os
-logging.debug("Imported os")
-import sys
-logging.debug("Imported sys")
-from tkinter import ttk
-logging.debug("Imported ttk")
-from tkinter import filedialog as fd
-logging.debug("Imported Filedialog")
-from tkcalendar import DateEntry
-logging.debug("Imported DateEntry")
-from pathlib import Path
-logging.debug("Imported Path")
-import tkinter.font as font
-logging.debug("Imported tk.font")
-import csv, codecs
-logging.debug("Imported csv & codecs")
-import datetime as dt
-logging.debug("Imported DateTime")
-import re
-logging.debug("Imported Re")
+
+from tkinter import *;                logging.debug("Imported tkinter.*")
+import tkinter.font as font;          logging.debug("Imported tk.font")
+from tkinter import ttk;              logging.debug("Imported ttk")
+from tkinter import filedialog as fd; logging.debug("Imported tk.Filedialog")
+from tkcalendar import DateEntry;     logging.debug("Imported tkcDateEntry")
+import threading;                     logging.debug("Imported threading")
+from pathlib import Path;             logging.debug("Imported Path")
+import sys;                           logging.debug("Imported sys")
+import re;                            logging.debug("Imported Re")
+import datetime as dt;                logging.debug("Imported DateTime")
+import os;                            logging.debug("Imported os")
+import csv, codecs;                   logging.debug("Imported csv & codecs")
 logging.debug("Importing done!")
 
 versionTag = '0.3.1'
