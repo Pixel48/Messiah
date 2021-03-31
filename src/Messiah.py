@@ -89,6 +89,7 @@ class MainWindow(object):
     self.datePick.grid(row=R, column=C, sticky='WE', padx=_padx, pady=_pady)
     # main / time start #
     # main / time start / label #
+    C = 0
     R += 1
     self.timeLabelStart = Label(frame)
     self.timeLabelStart['text'] = "Lesson start:"
@@ -107,6 +108,7 @@ class MainWindow(object):
     self.timePickStart.grid(row=R, column=C, sticky='WE', padx=_padx, pady=_pady)
     # main / event duration #
     # main / event duration / label #
+    C = 0
     R += 1
     self.eventDurationLabel = Label(frame)
     self.eventDurationLabel['text'] = "Lesson duration [min]:"
@@ -122,6 +124,7 @@ class MainWindow(object):
     self.eventDurationScale.grid(row=R, column=C, sticky='WE', padx=_padx, pady=_pady)
     # main / presence tolerance #
     # main / presence tolerance / label #
+    C = 0
     R += 1
     self.presenceTolLabel = Label(frame)
     self.presenceTolLabel['text'] = "Presence tolerance [min]:"
@@ -138,6 +141,7 @@ class MainWindow(object):
     self.presenceTolScale.grid(row=R, column=C, sticky='WE', padx=_padx, pady=_pady)
     # main / late tolerance #
     # main / late tolerance / label #
+    C = 0
     R += 1
     self.lateTolLabel = Label(frame)
     self.lateTolLabel['text'] = "Late tolerance [min]:"
@@ -153,6 +157,7 @@ class MainWindow(object):
     self.lateTolScale.grid(row=R, column=C, sticky='WE', padx=_padx, pady=_pady)
     # main / escape tolerance #
     # main / escape tolerance / label#
+    C = 0
     R += 1
     self.escTolLabel = Label(frame)
     self.escTolLabel['text'] = 'Escape tolerance [min]:'
@@ -168,6 +173,7 @@ class MainWindow(object):
     self.ecsTolScale.grid(row=R, column=C, sticky='WE', padx=_padx, pady=_pady)
     # main / buttons #
     # main / buttons / list #
+    C = 0
     R += 1
     self.listBtn = Button(frame)
     self.listBtn['text'] = "Attenders list"
