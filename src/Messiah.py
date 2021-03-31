@@ -56,21 +56,6 @@ lateTolDef = 10
 validateToleranceMaxDef = 1 + 30
 _padx = 5
 _pady = 5
-global C
-global R
-R = 0
-C = 0
-def nextRow(row=1, column=0):
-  global R, C
-  R += row
-  C = column
-def nextCol(column=1):
-  global C
-  C += column
-def newCol(column=0):
-  global C, R
-  R = 0
-  C = column
 def plane(a):
   out = a**(1/2)*2+1
   return out if a > out else a//2+1
@@ -88,29 +73,28 @@ class MainWindow(object):
     self.list = []
     logging.info("Start time: " + self.getTimeStr())
   def build(self, frame):
-    global C, R
+    C, R = 0, 0
     self.footerFont = font.Font(size=7)
     # main #
     # main / date #
     # main / date / label #
-    newCol()
     self.dateLabel = Label(frame)
     self.dateLabel['text'] = "Lesson date:"
     self.dateLabel.grid(row=R, column=C, sticky='E', padx=_padx, pady=_pady)
     # main / date / datepick #
-    nextCol()
+    C += 1
     self.datePick = CustomDateEntry(frame, width=12, background='darkblue', foreground='white', borderwidth=2)
     self.datePick._set_text(self.datePick._date.strftime('%d.%m.%Y'))
     self.datePick['justify'] = CENTER
     self.datePick.grid(row=R, column=C, sticky='WE', padx=_padx, pady=_pady)
     # main / time start #
     # main / time start / label #
-    nextRow()
+    R += 1
     self.timeLabelStart = Label(frame)
     self.timeLabelStart['text'] = "Lesson start:"
     self.timeLabelStart.grid(row=R, column=C, sticky='E', padx=_padx, pady=_pady)
     # main / time start / time #
-    nextCol()
+    C += 1
     self.timePickStart = Entry(frame)
     # self.timePickStart['text'] = self.getTimeStr() # DEBUG in future
     # self.setTimeStr(self.timePickStart)
@@ -123,12 +107,12 @@ class MainWindow(object):
     self.timePickStart.grid(row=R, column=C, sticky='WE', padx=_padx, pady=_pady)
     # main / event duration #
     # main / event duration / label #
-    nextRow()
+    R += 1
     self.eventDurationLabel = Label(frame)
     self.eventDurationLabel['text'] = "Lesson duration [min]:"
     self.eventDurationLabel.grid(row=R, column=C, sticky='E', padx=_padx, pady=_pady)
     # # main / event duration / time #
-    nextCol()
+    C += 1
     self.eventDurationScale = Scale(frame)
     self.eventDurationScale['from_'] = 30
     self.eventDurationScale['to_'] = 90
@@ -138,12 +122,12 @@ class MainWindow(object):
     self.eventDurationScale.grid(row=R, column=C, sticky='WE', padx=_padx, pady=_pady)
     # main / presence tolerance #
     # main / presence tolerance / label #
-    nextRow()
+    R += 1
     self.presenceTolLabel = Label(frame)
     self.presenceTolLabel['text'] = "Presence tolerance [min]:"
     self.presenceTolLabel.grid(row=R, column=C, sticky='E', padx=_padx, pady=_pady)
     # main / presence tolerance / scale #
-    nextCol()
+    C += 1
     self.presenceTolScale = Scale(frame)
     self.presenceTolScale['from_'] = 1
     self.presenceTolScale['to_'] = 10
@@ -154,12 +138,12 @@ class MainWindow(object):
     self.presenceTolScale.grid(row=R, column=C, sticky='WE', padx=_padx, pady=_pady)
     # main / late tolerance #
     # main / late tolerance / label #
-    nextRow()
+    R += 1
     self.lateTolLabel = Label(frame)
     self.lateTolLabel['text'] = "Late tolerance [min]:"
     self.lateTolLabel.grid(row=R, column=C, sticky='E', padx=_padx, pady=_pady)
     # main / late tolerance / scale #
-    nextCol()
+    C += 1
     self.lateTolScale = Scale(frame)
     self.lateTolScale['from_'] = 6
     self.lateTolScale['to_'] = 15
@@ -169,12 +153,12 @@ class MainWindow(object):
     self.lateTolScale.grid(row=R, column=C, sticky='WE', padx=_padx, pady=_pady)
     # main / escape tolerance #
     # main / escape tolerance / label#
-    nextRow()
+    R += 1
     self.escTolLabel = Label(frame)
     self.escTolLabel['text'] = 'Escape tolerance [min]:'
     self.escTolLabel.grid(row=R, column=C, sticky='E', padx=_padx, pady=_pady)
     # main / escape tolerance / scale #
-    nextCol()
+    C += 1
     self.ecsTolScale = Scale(frame)
     self.ecsTolScale['from_'] = 15
     self.ecsTolScale['to_'] = 0
@@ -184,14 +168,14 @@ class MainWindow(object):
     self.ecsTolScale.grid(row=R, column=C, sticky='WE', padx=_padx, pady=_pady)
     # main / buttons #
     # main / buttons / list #
-    nextRow()
+    R += 1
     self.listBtn = Button(frame)
     self.listBtn['text'] = "Attenders list"
     self.listBtn['command'] = self.importAttenders
     self.listBtn['width'] = 20
     self.listBtn.grid(row=R, column=C, sticky='WE', padx=_padx, pady=_pady)
     # main / buttons / Import CSV #
-    nextCol()
+    C += 1
     self.csvBtn = Button(frame)
     self.csvBtn['text'] = "Import CSV"
     self.csvBtn['command'] = self.importCSV
@@ -351,7 +335,7 @@ class ResultWindow(object):
     self.frame.grid()
   def build(self, frame):
     """Create Result window (scrollable in future)"""
-    R, C = 0, 0
+    C, R = 0, 0
     row = plane(len(self.log))
     legalPresence = dt.timedelta(0, 60 * self.above.presenceTolScale.get())
     legalLate = dt.timedelta(0, 60 * self.above.lateTolScale.get())
