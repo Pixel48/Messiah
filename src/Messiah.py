@@ -1,7 +1,7 @@
 import logging
 LOG_FORMAT = '[%(levelname)s] %(message)s'
 logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
-logging.disable(logging.CRITICAL)
+logging.disable(logging.NOTSET)
 logging.debug("Imported Logging")
 
 from tkinter import *;                logging.debug("Imported tkinter.*")
