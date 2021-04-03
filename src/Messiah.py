@@ -18,7 +18,7 @@ import os;                            logging.debug("Imported os")
 import csv, codecs;                   logging.debug("Imported csv & codecs")
 logging.debug("Importing done!")
 
-versionTag = '0.3.1'
+versionTag = '0.3.2'
 ICONPATH = 'icons/ico.ico' if '.exe' not in sys.argv[0] else 'Messiah.exe'
 
 DOWNPATH = str(Path.home() / 'Downloads')
