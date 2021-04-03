@@ -205,15 +205,24 @@ class MainWindow(object):
       initialdir=DOCSPATH,
       filetypes=(
         ('Text file', '*.txt'),
+        ('Perfect CSV', '*.csv'),
       )
     )
     logging.debug("filename attenders = " + str(filename))
     self.list = []
     if filename:
-      with codecs.open(filename, 'r',  'utf-8') as attList:
-        for line in attList.readlines():
-          line = line.strip()
-          if line != '': self.list.append(line)
+      if '.txt' in filename:
+        with codecs.open(filename, 'r',  'utf-8') as attList:
+          for line in attList.readlines():
+            line = line.strip()
+            if line != '': self.list.append(line)
+      elif '.csv' in filename:
+        with codecs.open(filename, 'r', 'utf-16') as attList:
+          attList.readline()
+          for line in attList.readlines():
+            line = line.strip()
+            line = line.split('\t')[0]
+            if line != '': self.list.append(line)
       self.listBtn['text'] = os.path.basename(filename).split('.')[0]
     else:
       self.listBtn['text'] = "Attenders list"
