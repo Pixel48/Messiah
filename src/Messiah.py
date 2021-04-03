@@ -360,7 +360,7 @@ class ResultWindow(object):
       else:
         escapeDelta = dt.timedelta()
       statusID = {
-        0: 'Present',
+        0: 'On time',
         1: 'Absent',
         2: 'Late',
         3: 'Too late'
